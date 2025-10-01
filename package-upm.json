@@ -1,0 +1,6 @@
+{
+    "name": "com.conceptfactory.smarttools",
+    "version": "1.0.0",
+    "git_url": "https://github.com/conceptfac/com.conceptfactory.smarttools.git",
+    "upm_reg_url": "https://github.com/openupm/openupm.git"
+}

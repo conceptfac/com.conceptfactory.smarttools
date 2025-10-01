@@ -1,0 +1,23 @@
+{
+  "name": "com.conceptfactory.smarttools",
+  "displayName": "Concept Factory Smart Tools",
+  "version": "1.0.1",
+  "type": "tool",
+  "unity": "6000.0",
+  "unityRelease": "43f1",
+  "description": "Smart Tools package of ConceptFactory, providing essential utilities and components for building robust projects. It includes Smart Builder and Smart Uploader tools. Ideal for use in any Unity project for reusable, high-performance solutions.\n\nhttps://github.com/conceptfac/com.conceptfactory.smarttools.git",
+  "documentationUrl": "",
+  "changelogUrl": "",
+  "license": "Source-Available \u2013 No Modification",
+  "licensesUrl": "SEE LICENSE FILE",
+  "keywords": [],
+  "author": {
+    "name": "Concept Factory",
+    "email": "conceptfac@gmail.com",
+    "url": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/conceptfac/com.conceptfactory.smarttools.git"
+  }
+}
