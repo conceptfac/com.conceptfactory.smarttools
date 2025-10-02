@@ -1,0 +1,55 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" xmlns:quantumEditor="Quantum.Editor" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.conceptfactory.smarttools/Editor/SmartBuilder/Resources/SmartBuilderWindowStyles.uss?fileID=7433441132597879392&amp;guid=752d554487b9d79458a2d1c3dbb31d34&amp;type=3#SmartBuilderWindowStyles" />
+    <engine:VisualElement name="ScenesPanel" style="flex-direction: column; justify-content: space-between; flex-grow: 1; display: flex;">
+        <engine:Label name="smartBuildLabel" text="SMART BUILDER - Scenes to Publish" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: flex-end; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; height: 36px; padding-top: 4px; padding-right: 8px; padding-bottom: 4px; padding-left: 8px; font-size: 14px;" />
+        <engine:VisualElement class="list" style="display: flex; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 8px; border-left-color: rgba(20, 21, 22, 0.78); border-right-color: rgba(20, 21, 22, 0.78); border-top-color: rgba(20, 21, 22, 0.78); border-bottom-color: rgba(20, 21, 22, 0.78);">
+            <engine:ScrollView name="ScenesScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" style="flex-grow: 1; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0; background-color: rgb(42, 42, 42);">
+                <engine:VisualElement style="flex-grow: 1; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
+                    <Concept.UI.CustomToggle is-label-left="false" text="Sample Scene" checked="true" class="scene-toggle" />
+                    <Concept.UI.CustomToggle is-label-left="false" text="Test Scene" checked="false" style="padding-top: 4px; padding-right: 8px; padding-bottom: 4px; padding-left: 8px; background-color: rgba(20, 21, 22, 0); border-bottom-color: rgba(20, 21, 22, 0.59); border-bottom-width: 1px;" />
+                </engine:VisualElement>
+            </engine:ScrollView>
+        </engine:VisualElement>
+        <engine:Button text="Next" name="ButtonNext" class="button" style="align-self: flex-end;" />
+    </engine:VisualElement>
+    <engine:VisualElement name="BuilderPanel" style="flex-direction: column; justify-content: space-between; flex-grow: 1; display: none;">
+        <engine:Label name="smartBuildLabel" text="SMART BUILDER - Build Settings" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: flex-end; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; height: 36px; padding-top: 4px; padding-right: 8px; padding-bottom: 4px; padding-left: 8px; font-size: 14px;" />
+        <engine:VisualElement name="VisualElement" class="list" style="display: flex; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 8px; border-left-color: rgba(20, 21, 22, 0.78); border-right-color: rgba(20, 21, 22, 0.78); border-top-color: rgba(20, 21, 22, 0.78); border-bottom-color: rgba(20, 21, 22, 0.78);">
+            <engine:VisualElement style="flex-grow: 1; color: rgb(255, 255, 255); -unity-text-align: middle-left; padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px; background-color: rgb(42, 42, 42);">
+                <engine:EnumField label="Build Target" value="NoTarget" type="UnityEditor.BuildTarget, UnityEditor.CoreModule" name="BuildTargetEnum" style="min-width: 50%; margin-bottom: 8px;" />
+                <engine:VisualElement style="flex-direction: row;">
+                    <engine:TextField label="BuildPath" placeholder-text="&lt;Select Folder&gt;" name="BuildPathTextField" style="flex-grow: 1;" />
+                    <engine:Button text="Select" name="ButtonSelectPath" class="button" style="position: relative;" />
+                </engine:VisualElement>
+                <engine:VisualElement style="flex-grow: 1; align-self: stretch;" />
+                <Concept.UI.CustomToggle text="Upload After Build" name="AutoUploadToggle" style="flex-direction: row-reverse; align-self: flex-end;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:Button text="Build" name="ButtonBuild" class="button" style="align-self: flex-end;" />
+    </engine:VisualElement>
+    <engine:VisualElement name="UploaderPanel" style="flex-direction: column; justify-content: space-between; flex-grow: 1; display: none;">
+        <engine:Label name="smartBuildLabel" text="SMART BUILDER - Upload Settings" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: flex-end; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; height: 36px; padding-top: 4px; padding-right: 8px; padding-bottom: 4px; padding-left: 8px; font-size: 14px;" />
+        <engine:VisualElement class="list" style="display: flex; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 8px; border-left-color: rgba(20, 21, 22, 0.78); border-right-color: rgba(20, 21, 22, 0.78); border-top-color: rgba(20, 21, 22, 0.78); border-bottom-color: rgba(20, 21, 22, 0.78);">
+            <engine:VisualElement style="flex-grow: 1; color: rgb(255, 255, 255); -unity-text-align: middle-left; padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px; background-color: rgb(42, 42, 42);">
+                <engine:EnumField label="Ambient Type" value="DEV" type="Concept.SmartTools.AmbientType, com.conceptfactory.smarttools.editor" name="AmbientTypeEnum" style="min-width: 50%; margin-bottom: 8px; padding-bottom: 8px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-bottom-color: rgba(20, 21, 22, 0.59);" />
+                <engine:EnumField label="Upload Target" value="SFTP" type="Concept.SmartTools.SmartUploaderSettings+UploadTarget, com.conceptfactory.smarttools.editor" name="UploadTargetEnum" style="min-width: 50%; margin-bottom: 8px;" />
+                <engine:TextField label="Remote Port" placeholder-text="&lt;port&gt;" name="RemotePortTextField" value="0" style="margin-bottom: 8px;" />
+                <engine:TextField label="Bucket Name" placeholder-text="&lt;enter bucket address&gt;" name="BucketNameTextField" style="margin-bottom: 8px;" />
+                <engine:TextField label="Access Key" placeholder-text="&lt;enter access token key&gt;" name="AccessKeyTextField" style="margin-bottom: 8px;" />
+                <engine:TextField label="Secret Key" placeholder-text="&lt;enter secret key&gt;" name="SecretKeyTextField" style="margin-bottom: 8px;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:Button text="Upload" name="ButtonUpload" class="button" style="align-self: flex-end;" />
+    </engine:VisualElement>
+    <Concept.UI.TabNavigation tab-buttons="Scenes,Builder,Uploader" style="align-self: flex-start; position: absolute;" />
+    <engine:VisualElement name="ProgressOverlay" class="overlay" style="display: none; background-color: rgba(20, 21, 22, 0.78);">
+        <engine:Label name="ProgressStatusLabel" text="BUILDING PROJECT" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 2px; padding-left: 0; font-size: 14px;" />
+        <engine:VisualElement name="ProgressPanel" style="align-self: center; min-width: 360px; min-height: 24px; padding-top: 4px; padding-right: 4px; padding-bottom: 4px; padding-left: 4px; border-left-color: rgba(255, 255, 255, 0.39); border-right-color: rgba(255, 255, 255, 0.39); border-top-color: rgba(255, 255, 255, 0.39); border-bottom-color: rgba(255, 255, 255, 0.39); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 6px; border-top-right-radius: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; overflow: hidden;">
+            <engine:VisualElement style="flex-grow: 1; border-left-color: rgba(49, 117, 0, 0.78); border-right-color: rgba(49, 117, 0, 0.78); border-top-color: rgba(49, 117, 0, 0.78); border-bottom-color: rgba(49, 117, 0, 0.78); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; overflow: hidden;">
+                <engine:VisualElement name="ProgressBar" style="flex-grow: 1; transform-origin: left; background-color: rgba(147, 255, 0, 0.59); scale: 0.1 1;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:Label name="ProgressLabel" text="Compiling script modules..." class="h2" style="color: rgb(255, 255, 255); -unity-text-align: upper-right; align-self: center; margin-top: 2px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 12px; -unity-font-style: normal;" />
+        <engine:Button text="Cancel Operation" name="ButtonCancel" class="button" style="margin-top: 12px; display: none;" />
+    </engine:VisualElement>
+</engine:UXML>

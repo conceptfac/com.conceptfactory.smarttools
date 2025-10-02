@@ -8,7 +8,7 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using System.Collections.Generic;
 
-namespace Concept.Editor
+namespace Concept.SmartTools.Editor
 {
 
     /// <summary>
@@ -32,7 +32,7 @@ namespace Concept.Editor
         /// </summary>
         public event Action<string> OnStatusChanged;
         /// <summary>
-        /// Fired when the status message changes (technical English log).
+        /// Fired when the status message changes.
         /// </summary>
         public event Action<float> OnProgressChanged; // 0..1
 

@@ -1,0 +1,117 @@
+.smart-build {
+    flex-shrink: 1;
+    flex-basis: 0%;
+    flex-grow: 1;
+    justify-content: flex-start;
+    display: flex;
+    background-color: rgb(27, 28, 29);
+}
+
+.h2 {
+    font-size: 12px;
+    -unity-font-style: bold;
+    padding-bottom: 4px;
+    margin-bottom: 0;
+    -unity-text-align: upper-center;
+}
+
+.button {
+    color: white;
+    display: flex;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    height: auto;
+    align-content: center;
+    font-size: 14px;
+    flex-grow: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    background-color: rgb(20, 21, 22);
+    width: auto;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    margin-top: 0;
+    align-self: center;
+}
+
+.button:hover {
+    color: green;
+}
+
+.list {
+    display: flex;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-left-color: rgba(255, 255, 255, 0.39);
+    border-right-color: rgba(255, 255, 255, 0.39);
+    border-top-color: rgba(255, 255, 255, 0.39);
+    border-bottom-color: rgba(255, 255, 255, 0.39);
+    margin-top: 4px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    margin-left: 4px;
+    max-height: none;
+    flex-grow: 1;
+    overflow: hidden;
+    padding-top: 4px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+}
+
+.overlay {
+    flex-grow: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(20, 21, 22, 0.59);
+    justify-content: center;
+}
+
+.smart-build .tab-navigation .tab-button:hover {
+    color: green;
+}
+
+.scene-toggle {
+    padding-top: 4px;
+    padding-right: 8px;
+    padding-bottom: 4px;
+    padding-left: 8px;
+    background-color: rgba(20, 21, 22, 0);
+    border-bottom-color: rgba(20, 21, 22, 0.59);
+    border-bottom-width: 1px;
+}
+
+.unity-base-field__input {
+    background-color: rgba(20, 21, 22, 1);
+    min-width: 180px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-left-color: rgba(255, 255, 255, 0.39);
+    border-right-color: rgba(255, 255, 255, 0.39);
+    border-top-color: rgba(255, 255, 255, 0.39);
+    border-bottom-color: rgba(255, 255, 255, 0.39);
+}
