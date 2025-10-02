@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+#if UNITY_EDITOR && TOOLBAR_EXTENDER
 using Concept.UI;
 using UnityEditor;
 using UnityEngine;

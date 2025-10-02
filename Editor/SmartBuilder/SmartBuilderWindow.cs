@@ -14,6 +14,7 @@ namespace Concept.UI
         {
             var wnd = GetWindow<SmartBuilderWindow>();
             wnd.titleContent = new GUIContent("Smart Builder");
+            wnd.minSize = new Vector2(1024, 512);
         }
 
         // Unity chama CreateGUI quando a janela precisa montar sua UI com UI Toolkit. :contentReference[oaicite:0]{index=0}
@@ -26,6 +27,7 @@ namespace Concept.UI
             if (m_view == null)
             {
                 m_view = new SmartBuilderView();
+                m_view.AddToClassList("smart-build-wnd");
             }
 
             // (Opcional) ajuste para fazer a view se expandir para preencher espaço

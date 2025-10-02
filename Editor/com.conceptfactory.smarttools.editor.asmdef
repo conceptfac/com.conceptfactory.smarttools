@@ -2,9 +2,9 @@
     "name": "com.conceptfactory.smarttools.editor",
     "rootNamespace": "Concept.SmartTools.Editor",
     "references": [
-        "GUID:0a0471484b079be408cb3a0d7fe94736",
         "GUID:5dce1e5efc474ce4791e7ab351a3ddb4",
-        "GUID:e5b236249dae87640a12b6bc9898605b"
+        "GUID:e5b236249dae87640a12b6bc9898605b",
+        "GUID:0a0471484b079be408cb3a0d7fe94736"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -13,6 +13,12 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.marijnzwemmer.unity-toolbar-extender",
+            "expression": "1.4.2",
+            "define": "TOOLBAR_EXTENDER"
+        }
+    ],
     "noEngineReferences": false
 }
