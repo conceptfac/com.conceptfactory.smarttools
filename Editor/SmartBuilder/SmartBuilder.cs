@@ -13,12 +13,6 @@ namespace Concept.SmartTools.Editor
         /// Fired when the progress of the build changes (0..1).
         /// </summary>
         public static event Action<string> OnStatusChanged;
-        /// <summary>
-        /// Fired when the status message changes.
-        /// </summary>
-        public static event Action<float> OnProgressChanged; // 0..1
-
-
         public static void Build()
         {
 
