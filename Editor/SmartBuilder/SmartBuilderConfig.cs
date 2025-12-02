@@ -36,10 +36,13 @@ namespace Concept.SmartTools
         public static SmartUploaderSettings uploadSettings => instance.m_uploadSettings;
         private static SmartBuilderConfig LoadSmartBuilderConfig()
         {
-            if (!AssetDatabase.IsValidFolder("Resources")) AssetDatabase.CreateFolder("Assets", "Resources");
-
+            string resourcesPath = "Assets/Resources/";
             string fileName = "SmartBuilderConfig";
-            string assetPath = "Assets/Resources/" + fileName + ".asset";
+            string assetPath = resourcesPath + fileName + ".asset";
+
+            if (!AssetDatabase.IsValidFolder(resourcesPath))
+                AssetDatabase.CreateFolder("Assets", "Resources");
+
             SmartBuilderConfig preset = AssetDatabase.LoadAssetAtPath<SmartBuilderConfig>(assetPath);
 
             if (preset == null)
@@ -51,7 +54,6 @@ namespace Concept.SmartTools
             }
 
             return AssetDatabase.LoadAssetAtPath<SmartBuilderConfig>(assetPath);
-
         }
     }
 
