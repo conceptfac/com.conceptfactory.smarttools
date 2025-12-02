@@ -5,9 +5,13 @@
         "GUID:5dce1e5efc474ce4791e7ab351a3ddb4",
         "GUID:e5b236249dae87640a12b6bc9898605b",
         "GUID:6a1de493a1be88d4890100a3b2250db1",
-        "GUID:0a0471484b079be408cb3a0d7fe94736"
+        "GUID:0a0471484b079be408cb3a0d7fe94736",
+        "GUID:baed5459a375f3d4c81d90e20a315aa1",
+        "Renci.SshNet"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

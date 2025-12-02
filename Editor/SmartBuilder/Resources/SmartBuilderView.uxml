@@ -1,6 +1,6 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" xmlns:quantumEditor="Quantum.Editor" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <Style src="project://database/Packages/com.conceptfactory.smarttools/Editor/SmartBuilder/Resources/SmartBuilderWindowStyles.uss?fileID=7433441132597879392&amp;guid=752d554487b9d79458a2d1c3dbb31d34&amp;type=3#SmartBuilderWindowStyles" />
-    <engine:VisualElement name="ScenesPanel" style="flex-direction: column; justify-content: space-between; flex-grow: 1; display: flex;">
+    <engine:VisualElement name="ScenesPanel" style="flex-direction: column; justify-content: space-between; flex-grow: 1; display: none;">
         <engine:Label name="smartBuildLabel" text="SMART BUILDER - Scenes to Publish" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: flex-end; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; height: 36px; padding-top: 4px; padding-right: 8px; padding-bottom: 4px; padding-left: 8px; font-size: 14px;" />
         <engine:VisualElement class="list" style="display: flex; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 8px; border-left-color: rgba(20, 21, 22, 0.78); border-right-color: rgba(20, 21, 22, 0.78); border-top-color: rgba(20, 21, 22, 0.78); border-bottom-color: rgba(20, 21, 22, 0.78);">
             <engine:ScrollView name="ScenesScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" style="flex-grow: 1; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0; background-color: rgb(42, 42, 42);">
@@ -12,11 +12,11 @@
         </engine:VisualElement>
         <engine:Button text="Next" name="ButtonNext" class="button" style="align-self: flex-end;" />
     </engine:VisualElement>
-    <engine:VisualElement name="BuilderPanel" style="flex-direction: column; justify-content: space-between; flex-grow: 1; display: none;">
+    <engine:VisualElement name="BuilderPanel" style="flex-direction: column; justify-content: space-between; flex-grow: 1; display: flex;">
         <engine:Label name="smartBuildLabel" text="SMART BUILDER - Build Settings" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: flex-end; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; height: 36px; padding-top: 4px; padding-right: 8px; padding-bottom: 4px; padding-left: 8px; font-size: 14px;" />
         <engine:VisualElement name="VisualElement" class="list" style="display: flex; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 8px; border-left-color: rgba(20, 21, 22, 0.78); border-right-color: rgba(20, 21, 22, 0.78); border-top-color: rgba(20, 21, 22, 0.78); border-bottom-color: rgba(20, 21, 22, 0.78);">
             <engine:VisualElement style="flex-grow: 1; color: rgb(255, 255, 255); -unity-text-align: middle-left; padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px; background-color: rgb(42, 42, 42);">
-                <engine:EnumField label="Build Target" value="NoTarget" type="UnityEditor.BuildTarget, UnityEditor.CoreModule" name="BuildTargetEnum" style="min-width: 50%; margin-bottom: 8px;" />
+                <engine:EnumField label="Build Target" value="NoTarget" type="Concept.SmartTools.AmbientType, com.conceptfactory.smarttools" name="BuildTargetEnum" style="min-width: 50%; margin-bottom: 8px;" />
                 <engine:VisualElement style="flex-direction: row;">
                     <engine:TextField label="BuildPath" placeholder-text="&lt;Select Folder&gt;" name="BuildPathTextField" style="flex-grow: 1;" />
                     <engine:Button text="Select" name="ButtonSelectPath" class="button" style="position: relative;" />

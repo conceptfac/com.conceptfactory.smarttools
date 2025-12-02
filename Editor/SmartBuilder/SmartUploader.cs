@@ -3,11 +3,11 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
-using Renci.SshNet;
 using Amazon.S3;
 using Amazon.S3.Model;
 using System.Collections.Generic;
-
+using Renci.SshNet; // Added namespace for SftpClient
+using Renci.SshNet.Sftp;
 namespace Concept.SmartTools.Editor
 {
 

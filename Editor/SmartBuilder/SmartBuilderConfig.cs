@@ -9,7 +9,6 @@ using UnityEngine;
 
 namespace Concept.SmartTools
 {
-    public enum AmbientType { DEV, TEST, LOCAL };
 
     [CreateAssetMenu(fileName = "SmartBuilderConfig", menuName = "Tools/Concept Factory/Smart Builder Config Preset")]
     [Serializable]
@@ -37,7 +36,7 @@ namespace Concept.SmartTools
         public static SmartUploaderSettings uploadSettings => instance.m_uploadSettings;
         private static SmartBuilderConfig LoadSmartBuilderConfig()
         {
-            if (AssetDatabase.IsValidFolder("Resources")) AssetDatabase.CreateFolder("Assets", "Resources");
+            if (!AssetDatabase.IsValidFolder("Resources")) AssetDatabase.CreateFolder("Assets", "Resources");
 
             string fileName = "SmartBuilderConfig";
             string assetPath = "Assets/Resources/" + fileName + ".asset";
@@ -71,7 +70,7 @@ namespace Concept.SmartTools
     [Serializable]
     public class SmartUploaderSettings
     {
-        public AmbientType ambientType = AmbientType.DEV;
+        public AmbientType ambientType = AmbientType.DEVELOPMENT;
         public enum UploadTarget { SFTP, AWSS3 }
         public UploadTarget uploadTarget;
         public int awsRemotePort;
