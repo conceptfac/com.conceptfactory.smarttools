@@ -16,13 +16,21 @@
         <engine:Label name="smartBuildLabel" text="SMART BUILDER - Build Settings" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: flex-end; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; height: 36px; padding-top: 4px; padding-right: 8px; padding-bottom: 4px; padding-left: 8px; font-size: 14px;" />
         <engine:VisualElement name="VisualElement" class="list" style="display: flex; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 8px; border-left-color: rgba(20, 21, 22, 0.78); border-right-color: rgba(20, 21, 22, 0.78); border-top-color: rgba(20, 21, 22, 0.78); border-bottom-color: rgba(20, 21, 22, 0.78);">
             <engine:VisualElement style="flex-grow: 1; color: rgb(255, 255, 255); -unity-text-align: middle-left; padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px; background-color: rgb(42, 42, 42);">
-                <engine:EnumField label="Build Target" value="NoTarget" type="Concept.SmartTools.AmbientType, com.conceptfactory.smarttools" name="BuildTargetEnum" style="min-width: 50%; margin-bottom: 8px;" />
+                <engine:EnumField label="Build Target" type="UnityEditor.BuildTarget, UnityEditor.CoreModule" name="BuildTargetEnum" style="min-width: 50%; margin-bottom: 8px;">
+                    <Bindings>
+                        <engine:DataBinding property="value" data-source-path="m_buildSettings.buildTarget" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
+                    </Bindings>
+                </engine:EnumField>
                 <engine:VisualElement style="flex-direction: row;">
-                    <engine:TextField label="BuildPath" placeholder-text="&lt;Select Folder&gt;" name="BuildPathTextField" style="flex-grow: 1;" />
+                    <engine:TextField label="BuildPath" placeholder-text="&lt;Select Folder&gt;" name="BuildPathTextField" style="flex-grow: 1;">
+                        <Bindings>
+                            <engine:DataBinding property="value" data-source-path="m_buildSettings.buildPath" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
+                        </Bindings>
+                    </engine:TextField>
                     <engine:Button text="Select" name="ButtonSelectPath" class="button" style="position: relative;" />
                 </engine:VisualElement>
                 <engine:VisualElement style="flex-grow: 1; align-self: stretch;" />
-                <Concept.UI.CustomToggle text="Upload After Build" name="AutoUploadToggle" style="flex-direction: row-reverse; align-self: flex-end;" />
+                <Concept.UI.CustomToggle text="Upload After Build" name="AutoUploadToggle" checked="false" style="flex-direction: row-reverse; align-self: flex-end;" />
             </engine:VisualElement>
         </engine:VisualElement>
         <engine:Button text="Build" name="ButtonBuild" class="button" style="align-self: flex-end;" />
@@ -31,12 +39,28 @@
         <engine:Label name="smartBuildLabel" text="SMART BUILDER - Upload Settings" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: flex-end; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; height: 36px; padding-top: 4px; padding-right: 8px; padding-bottom: 4px; padding-left: 8px; font-size: 14px;" />
         <engine:VisualElement class="list" style="display: flex; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 8px; border-left-color: rgba(20, 21, 22, 0.78); border-right-color: rgba(20, 21, 22, 0.78); border-top-color: rgba(20, 21, 22, 0.78); border-bottom-color: rgba(20, 21, 22, 0.78);">
             <engine:VisualElement style="flex-grow: 1; color: rgb(255, 255, 255); -unity-text-align: middle-left; padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px; background-color: rgb(42, 42, 42);">
-                <engine:EnumField label="Ambient Type" value="DEV" type="Concept.SmartTools.AmbientType, com.conceptfactory.smarttools.editor" name="AmbientTypeEnum" style="min-width: 50%; margin-bottom: 8px; padding-bottom: 8px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-bottom-color: rgba(20, 21, 22, 0.59);" />
-                <engine:EnumField label="Upload Target" value="SFTP" type="Concept.SmartTools.SmartUploaderSettings+UploadTarget, com.conceptfactory.smarttools.editor" name="UploadTargetEnum" style="min-width: 50%; margin-bottom: 8px;" />
-                <engine:TextField label="Remote Port" placeholder-text="&lt;port&gt;" name="RemotePortTextField" value="0" style="margin-bottom: 8px;" />
-                <engine:TextField label="Bucket Name" placeholder-text="&lt;enter bucket address&gt;" name="BucketNameTextField" style="margin-bottom: 8px;" />
-                <engine:TextField label="Access Key" placeholder-text="&lt;enter access token key&gt;" name="AccessKeyTextField" style="margin-bottom: 8px;" />
-                <engine:TextField label="Secret Key" placeholder-text="&lt;enter secret key&gt;" name="SecretKeyTextField" style="margin-bottom: 8px;" />
+                <engine:EnumField label="Ambient Type" type="Concept.SmartTools.BuildType, com.conceptfactory.smarttools" name="AmbientTypeEnum" style="min-width: 50%; margin-bottom: 8px; padding-bottom: 8px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-bottom-color: rgba(20, 21, 22, 0.59);">
+                    <Bindings>
+                        <engine:DataBinding property="value" data-source-path="m_uploadSettings.buildType" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
+                    </Bindings>
+                </engine:EnumField>
+                <engine:EnumField label="Upload Target" value="SFTP" type="Concept.SmartTools.SmartUploaderSettings+UploadTarget, com.conceptfactory.smarttools.editor" name="UploadTargetEnum" style="min-width: 50%; margin-bottom: 8px;">
+                    <Bindings>
+                        <engine:DataBinding property="value" data-source-path="m_uploadSettings.uploadTarget" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
+                    </Bindings>
+                </engine:EnumField>
+                <engine:IntegerField label="Remote Port" value="0" name="RemotePortIntegerField">
+                    <Bindings>
+                        <engine:DataBinding property="value" data-source-path="m_uploadSettings.awsRemotePort" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
+                    </Bindings>
+                </engine:IntegerField>
+                <engine:TextField label="Bucket Name" placeholder-text="&lt;enter bucket address&gt;" name="BucketNameTextField" style="margin-bottom: 8px;">
+                    <Bindings>
+                        <engine:DataBinding property="value" data-source-path="m_uploadSettings.awsBucketName" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
+                    </Bindings>
+                </engine:TextField>
+                <engine:TextField label="Access Key" placeholder-text="&lt;enter access token key&gt;" name="AccessKeyTextField" password="false" style="margin-bottom: 8px;" />
+                <engine:TextField label="Secret Key" placeholder-text="&lt;enter secret key&gt;" name="SecretKeyTextField" password="true" style="margin-bottom: 8px;" />
             </engine:VisualElement>
         </engine:VisualElement>
         <engine:Button text="Upload" name="ButtonUpload" class="button" style="align-self: flex-end;" />

@@ -72,7 +72,7 @@ namespace Concept.SmartTools
     [Serializable]
     public class SmartUploaderSettings
     {
-        public AmbientType ambientType = AmbientType.DEVELOPMENT;
+        public BuildType buildType = BuildType.DEVELOPMENT;
         public enum UploadTarget { SFTP, AWSS3 }
         public UploadTarget uploadTarget;
         public int awsRemotePort;

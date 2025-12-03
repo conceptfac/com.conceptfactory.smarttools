@@ -1,12 +1,9 @@
 ﻿#if UNITY_EDITOR
 using Concept.UI;
-using System;
 using System.IO;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEditor.ObjectChangeEventStream;
 
 namespace Concept.SmartTools.Editor
 {
@@ -62,84 +59,96 @@ namespace Concept.SmartTools.Editor
             }
 
             visualTree.CloneTree(this);
+            
+            dataSource = SmartBuilderConfig.instance;
 
             m_tabNavigation = this.Q<TabNavigation>();
-            m_tabNavigation.OnTabSelect += UpdatePanels;
             m_scenesPanel = this.Q<VisualElement>("ScenesPanel");
-            m_scenesScrollView = this.Q<ScrollView>("ScenesScrollView");
-            m_buttonNext = this.Q<Button>("ButtonNext");
-            m_buttonNext.clicked += OnNextClicked;
-            m_builderPanel = this.Q<VisualElement>("BuilderPanel");
-            m_buildTargetEnum = this.Q<EnumField>("BuildTargetEnum");
-            m_buildTargetEnum.RegisterValueChangedCallback(evt =>
-            {
-                SmartBuilderConfig.buildSettings.buildTarget = (BuildTarget)evt.newValue;
-            });
-            m_builderPathField = this.Q<TextField>("BuildPathTextField");
-            m_builderPathField.RegisterValueChangedCallback(evt =>
-            {
-                SmartBuilderConfig.buildSettings.buildPath = evt.newValue;
-            });
 
-            m_buttonSelectPath = this.Q<Button>("ButtonSelectPath");
-            m_buttonSelectPath.clicked += SelectPath;
-
-            m_autoUploadToggle = this.Q<CustomToggle>("AutoUploadToggle");
-            m_autoUploadToggle.OnToggleChanged += (c) => SmartBuilderConfig.uploadAfterBuild = c;
-
-
-
-            m_buttonBuild = this.Q<Button>("ButtonBuild");
-            m_buttonBuild.clicked += OnBuildClicked;
-            m_uploaderPanel = this.Q<VisualElement>("UploaderPanel");
-
-            m_ambientTypeEnum = this.Q<EnumField>("AmbientTypeEnum");
-            m_ambientTypeEnum.RegisterValueChangedCallback(evt =>
+            m_tabNavigation.SetTabsContent(new System.Collections.Generic.List<(string, VisualElement)>()
             {
-                SmartBuilderConfig.uploadSettings.ambientType = (AmbientType)evt.newValue;
+                ("Scenes", m_scenesPanel),
+                ("Builder", this.Q<VisualElement>("BuilderPanel")),
+                ("Uploader", this.Q<VisualElement>("UploaderPanel"))
             });
-            m_uploadTargetEnum = this.Q<EnumField>("UploadTargetEnum");
-            m_uploadTargetEnum.RegisterValueChangedCallback(evt =>
-            {
-                SmartBuilderConfig.uploadSettings.uploadTarget = (SmartUploaderSettings.UploadTarget)evt.newValue;
-            });
-            m_remotePortField = this.Q<TextField>("RemotePortTextField");
-            m_remotePortField.RegisterValueChangedCallback(evt =>
-            {
-                if (int.TryParse(evt.newValue, out int port))
-                {
-                    SmartBuilderConfig.uploadSettings.awsRemotePort = port;
-                }
-                else
-                {
-                    m_remotePortField.value = evt.previousValue;
-                }
-            });
-            m_bucketNameField = this.Q<TextField>("BucketNameTextField");
-            m_bucketNameField.RegisterValueChangedCallback(evt =>
-            {
-                SmartBuilderConfig.uploadSettings.awsBucketName = evt.newValue;
-            });
-            m_accessKeyField = this.Q<TextField>("AccessKeyTextField");
-            m_accessKeyField.RegisterValueChangedCallback(evt =>
-            {
-            });
-            m_secretKeyField = this.Q<TextField>("SecretKeyTextField");
-            m_secretKeyField.RegisterValueChangedCallback(evt =>
-            {
-            });
+            /*
+                        m_tabNavigation.OnTabSelect += UpdatePanels;
+            m_scenesPanel = this.Q<VisualElement>("ScenesPanel");
+                        m_scenesScrollView = this.Q<ScrollView>("ScenesScrollView");
+                        m_buttonNext = this.Q<Button>("ButtonNext");
+                        m_buttonNext.clicked += OnNextClicked;
+                        m_builderPanel = this.Q<VisualElement>("BuilderPanel");
+                        m_buildTargetEnum = this.Q<EnumField>("BuildTargetEnum");
+                        m_buildTargetEnum.RegisterValueChangedCallback(evt =>
+                        {
+                            SmartBuilderConfig.buildSettings.buildTarget = (BuildTarget)evt.newValue;
+                        });
+                        m_builderPathField = this.Q<TextField>("BuildPathTextField");
+                        m_builderPathField.RegisterValueChangedCallback(evt =>
+                        {
+                            SmartBuilderConfig.buildSettings.buildPath = evt.newValue;
+                        });
 
-            m_buttonUpload = this.Q<Button>("ButtonUpload");
-            m_buttonUpload.clicked += OnUploadClicked;
-            m_progressOverlay = this.Q<VisualElement>("ProgressOverlay");
-            m_progressStatusLabel = this.Q<Label>("ProgressStatusLabel");
-            m_progressPanel = this.Q<VisualElement>("ProgressPanel");
-            m_progressBar = this.Q<VisualElement>("ProgressBar");
-            m_progressLabel = this.Q<Label>("ProgressLabel");
-            m_buttonCancel = this.Q<Button>("ButtonCancel");
-            m_buttonCancel.clicked += CancelCurrentProgress;
+                        m_buttonSelectPath = this.Q<Button>("ButtonSelectPath");
+                        m_buttonSelectPath.clicked += SelectPath;
 
-            UpdatePanels(m_tabNavigation.index);
+                        m_autoUploadToggle = this.Q<CustomToggle>("AutoUploadToggle");
+                        m_autoUploadToggle.OnToggleChanged += (c) => SmartBuilderConfig.uploadAfterBuild = c;
+
+
+
+                        m_buttonBuild = this.Q<Button>("ButtonBuild");
+                        m_buttonBuild.clicked += OnBuildClicked;
+                        m_uploaderPanel = this.Q<VisualElement>("UploaderPanel");
+
+                        m_ambientTypeEnum = this.Q<EnumField>("AmbientTypeEnum");
+                        m_ambientTypeEnum.RegisterValueChangedCallback(evt =>
+                        {
+                            SmartBuilderConfig.uploadSettings.buildType = (BuildType)evt.newValue;
+                        });
+                        m_uploadTargetEnum = this.Q<EnumField>("UploadTargetEnum");
+                        m_uploadTargetEnum.RegisterValueChangedCallback(evt =>
+                        {
+                            SmartBuilderConfig.uploadSettings.uploadTarget = (SmartUploaderSettings.UploadTarget)evt.newValue;
+                        });
+                        m_remotePortField = this.Q<TextField>("RemotePortTextField");
+                        m_remotePortField.RegisterValueChangedCallback(evt =>
+                        {
+                            if (int.TryParse(evt.newValue, out int port))
+                            {
+                                SmartBuilderConfig.uploadSettings.awsRemotePort = port;
+                            }
+                            else
+                            {
+                                m_remotePortField.value = evt.previousValue;
+                            }
+                        });
+                        m_bucketNameField = this.Q<TextField>("BucketNameTextField");
+                        m_bucketNameField.RegisterValueChangedCallback(evt =>
+                        {
+                            SmartBuilderConfig.uploadSettings.awsBucketName = evt.newValue;
+                        });
+                        m_accessKeyField = this.Q<TextField>("AccessKeyTextField");
+                        m_accessKeyField.RegisterValueChangedCallback(evt =>
+                        {
+                        });
+                        m_secretKeyField = this.Q<TextField>("SecretKeyTextField");
+                        m_secretKeyField.RegisterValueChangedCallback(evt =>
+                        {
+                        });
+
+                        m_buttonUpload = this.Q<Button>("ButtonUpload");
+                        m_buttonUpload.clicked += OnUploadClicked;
+                        m_progressOverlay = this.Q<VisualElement>("ProgressOverlay");
+                        m_progressStatusLabel = this.Q<Label>("ProgressStatusLabel");
+                        m_progressPanel = this.Q<VisualElement>("ProgressPanel");
+                        m_progressBar = this.Q<VisualElement>("ProgressBar");
+                        m_progressLabel = this.Q<Label>("ProgressLabel");
+                        m_buttonCancel = this.Q<Button>("ButtonCancel");
+                        m_buttonCancel.clicked += CancelCurrentProgress;
+
+                        UpdatePanels(m_tabNavigation.index);
+            */
         }
 
 
@@ -215,7 +224,7 @@ namespace Concept.SmartTools.Editor
             }
             else if (index == 2)
             {
-                m_ambientTypeEnum.value = SmartBuilderConfig.uploadSettings.ambientType;
+                m_ambientTypeEnum.value = SmartBuilderConfig.uploadSettings.buildType;
                 m_uploadTargetEnum.value = SmartBuilderConfig.uploadSettings.uploadTarget;
                 m_remotePortField.value = SmartBuilderConfig.uploadSettings.awsRemotePort.ToString();
                 m_bucketNameField.value = SmartBuilderConfig.uploadSettings.awsBucketName;
