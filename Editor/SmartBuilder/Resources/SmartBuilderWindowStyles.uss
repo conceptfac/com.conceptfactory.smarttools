@@ -107,7 +107,7 @@
 }
 
 .unity-base-field__input {
-    background-color: rgba(20, 21, 22, 1);
+    background-color: rgb(20, 21, 22);
     min-width: 180px;
     border-top-width: 1px;
     border-right-width: 1px;
@@ -121,4 +121,7 @@
     border-right-color: rgba(255, 255, 255, 0.39);
     border-top-color: rgba(255, 255, 255, 0.39);
     border-bottom-color: rgba(255, 255, 255, 0.39);
+}
+
+.custom-toggle {
 }

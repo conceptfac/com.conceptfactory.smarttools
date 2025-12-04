@@ -1,9 +1,11 @@
 ﻿#if UNITY_EDITOR
 using Concept.UI;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static Codice.CM.Common.CmCallContext;
 
 namespace Concept.SmartTools.Editor
 {
@@ -59,7 +61,7 @@ namespace Concept.SmartTools.Editor
             }
 
             visualTree.CloneTree(this);
-            
+
             dataSource = SmartBuilderConfig.instance;
 
             m_tabNavigation = this.Q<TabNavigation>();
@@ -71,12 +73,30 @@ namespace Concept.SmartTools.Editor
                 ("Builder", this.Q<VisualElement>("BuilderPanel")),
                 ("Uploader", this.Q<VisualElement>("UploaderPanel"))
             });
+
+            m_scenesScrollView = this.Q<ScrollView>("ScenesScrollView");
+            LoadSceneList(m_scenesScrollView);
+
+            m_buttonNext = this.Q<Button>("ButtonNext");
+            m_buttonNext.clicked += OnNextClicked;
+
+            m_buttonBuild = this.Q<Button>("ButtonBuild");
+            m_buttonBuild.clicked += OnBuildClicked;
+
+
+            m_progressOverlay = this.Q<VisualElement>("ProgressOverlay");
+            m_progressStatusLabel = this.Q<Label>("ProgressStatusLabel");
+            m_progressPanel = this.Q<VisualElement>("ProgressPanel");
+            m_progressBar = this.Q<VisualElement>("ProgressBar");
+            m_progressLabel = this.Q<Label>("ProgressLabel");
+            m_buttonCancel = this.Q<Button>("ButtonCancel");
+            m_buttonCancel.clicked += CancelCurrentProgress;
+
+
             /*
                         m_tabNavigation.OnTabSelect += UpdatePanels;
             m_scenesPanel = this.Q<VisualElement>("ScenesPanel");
-                        m_scenesScrollView = this.Q<ScrollView>("ScenesScrollView");
-                        m_buttonNext = this.Q<Button>("ButtonNext");
-                        m_buttonNext.clicked += OnNextClicked;
+                        
                         m_builderPanel = this.Q<VisualElement>("BuilderPanel");
                         m_buildTargetEnum = this.Q<EnumField>("BuildTargetEnum");
                         m_buildTargetEnum.RegisterValueChangedCallback(evt =>
@@ -97,8 +117,6 @@ namespace Concept.SmartTools.Editor
 
 
 
-                        m_buttonBuild = this.Q<Button>("ButtonBuild");
-                        m_buttonBuild.clicked += OnBuildClicked;
                         m_uploaderPanel = this.Q<VisualElement>("UploaderPanel");
 
                         m_ambientTypeEnum = this.Q<EnumField>("AmbientTypeEnum");
@@ -139,13 +157,6 @@ namespace Concept.SmartTools.Editor
 
                         m_buttonUpload = this.Q<Button>("ButtonUpload");
                         m_buttonUpload.clicked += OnUploadClicked;
-                        m_progressOverlay = this.Q<VisualElement>("ProgressOverlay");
-                        m_progressStatusLabel = this.Q<Label>("ProgressStatusLabel");
-                        m_progressPanel = this.Q<VisualElement>("ProgressPanel");
-                        m_progressBar = this.Q<VisualElement>("ProgressBar");
-                        m_progressLabel = this.Q<Label>("ProgressLabel");
-                        m_buttonCancel = this.Q<Button>("ButtonCancel");
-                        m_buttonCancel.clicked += CancelCurrentProgress;
 
                         UpdatePanels(m_tabNavigation.index);
             */
@@ -159,6 +170,25 @@ namespace Concept.SmartTools.Editor
         private void OnBuildClicked()
         {
             if (!ValidateBuildSettings()) return;
+
+            //Check current build target
+
+            if (SmartBuilderConfig.buildSettings.buildTarget != EditorUserBuildSettings.activeBuildTarget)
+            {
+                bool changeBuildTarget = EditorUtility.DisplayDialog(
+                   "Incompatible Build Platforms",
+                   $"Current build target is {EditorUserBuildSettings.activeBuildTarget}. Do you want to switch to {SmartBuilderConfig.buildSettings.buildTarget}?", "Yes", "No"
+               );
+
+                if (changeBuildTarget)
+                {
+                    EditorUserBuildSettings.SwitchActiveBuildTarget(SmartBuilderConfig.buildSettings.buildTarget);
+
+                }
+                else
+                    SmartBuilderConfig.buildSettings.buildTarget = EditorUserBuildSettings.activeBuildTarget;
+                    return;
+            }
 
             m_progressStatusLabel.text = "Building Project";
             m_progressPanel.style.display = DisplayStyle.None;
@@ -183,55 +213,34 @@ namespace Concept.SmartTools.Editor
             m_progressLabel.text = "Sending files to remote repository...";
             m_progressOverlay.style.display = DisplayStyle.Flex;
         }
-        void UpdatePanels(int index)
+        void LoadSceneList(ScrollView scrollView)
         {
-            m_scenesPanel.style.display = index == 0 ? DisplayStyle.Flex : DisplayStyle.None;
-            m_builderPanel.style.display = index == 1 ? DisplayStyle.Flex : DisplayStyle.None;
-            m_uploaderPanel.style.display = index == 2 ? DisplayStyle.Flex : DisplayStyle.None;
-
-            if (index == 0)
+            scrollView.Clear();
+            foreach (var scene in EditorBuildSettings.scenes)
             {
-                m_scenesScrollView.Clear();
-                foreach (var scene in EditorBuildSettings.scenes)
+                VisualElement sceneItem = new VisualElement();
+                sceneItem.AddToClassList("scene-toggle");
+
+                CustomToggle sceneToggle = new CustomToggle() { label = scene.path };
+                sceneToggle.SetValue(SmartBuilderConfig.buildSettings.scenesToBuild.Contains(scene.path));
+                sceneItem.Add(sceneToggle);
+
+
+                sceneToggle.OnToggleChanged += (c) =>
                 {
-                    CustomToggle sceneToggle = new CustomToggle() { text = scene.path, IsChecked = SmartBuilderConfig.buildSettings.scenesToBuild.Contains(scene.path), IsLabelLeft = false };
 
-                    sceneToggle.AddToClassList("scene-toggle");
+                    bool contains = SmartBuilderConfig.buildSettings.scenesToBuild.Contains(scene.path);
 
-                    sceneToggle.OnToggleChanged += (c) =>
-                    {
+                    if (c && !contains)
+                        SmartBuilderConfig.buildSettings.scenesToBuild.Add(scene.path);
+                    else
+                        if (!c && contains)
+                        SmartBuilderConfig.buildSettings.scenesToBuild.Remove(scene.path);
 
-                        bool contains = SmartBuilderConfig.buildSettings.scenesToBuild.Contains(scene.path);
+                };
 
-                        if (c && !contains)
-                            SmartBuilderConfig.buildSettings.scenesToBuild.Add(scene.path);
-                        else
-                            if (!c && contains)
-                            SmartBuilderConfig.buildSettings.scenesToBuild.Remove(scene.path);
-
-                    };
-
-                    m_scenesScrollView.Add(sceneToggle);
-                }
+                scrollView.Add(sceneItem);
             }
-            else
-
-            if (index == 1)
-            {
-                m_buildTargetEnum.value = SmartBuilderConfig.buildSettings.buildTarget;
-                m_builderPathField.value = SmartBuilderConfig.buildSettings.buildPath;
-                m_autoUploadToggle.IsChecked = SmartBuilderConfig.uploadAfterBuild;
-            }
-            else if (index == 2)
-            {
-                m_ambientTypeEnum.value = SmartBuilderConfig.uploadSettings.buildType;
-                m_uploadTargetEnum.value = SmartBuilderConfig.uploadSettings.uploadTarget;
-                m_remotePortField.value = SmartBuilderConfig.uploadSettings.awsRemotePort.ToString();
-                m_bucketNameField.value = SmartBuilderConfig.uploadSettings.awsBucketName;
-                //m_accessKeyField.value = SmartBuilderConfig.uploadSettings.awsAccessKey;
-                //m_secretKeyField.value = SmartBuilderConfig.uploadSettings.awsSecretKey;
-            }
-
         }
 
         void CancelCurrentProgress()

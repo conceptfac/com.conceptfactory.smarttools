@@ -3,10 +3,15 @@
     <engine:VisualElement name="ScenesPanel" style="flex-direction: column; justify-content: space-between; flex-grow: 1; display: none;">
         <engine:Label name="smartBuildLabel" text="SMART BUILDER - Scenes to Publish" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: flex-end; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; height: 36px; padding-top: 4px; padding-right: 8px; padding-bottom: 4px; padding-left: 8px; font-size: 14px;" />
         <engine:VisualElement class="list" style="display: flex; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 8px; border-left-color: rgba(20, 21, 22, 0.78); border-right-color: rgba(20, 21, 22, 0.78); border-top-color: rgba(20, 21, 22, 0.78); border-bottom-color: rgba(20, 21, 22, 0.78);">
-            <engine:ScrollView name="ScenesScrollView" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" style="flex-grow: 1; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0; background-color: rgb(42, 42, 42);">
-                <engine:VisualElement style="flex-grow: 1; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
-                    <Concept.UI.CustomToggle is-label-left="false" text="Sample Scene" checked="true" class="scene-toggle" />
-                    <Concept.UI.CustomToggle is-label-left="false" text="Test Scene" checked="false" style="padding-top: 4px; padding-right: 8px; padding-bottom: 4px; padding-left: 8px; background-color: rgba(20, 21, 22, 0); border-bottom-color: rgba(20, 21, 22, 0.59); border-bottom-width: 1px;" />
+            <engine:ScrollView name="ScenesScrollView" horizontal-scroller-visibility="Hidden" touch-scroll-type="Elastic" style="flex-grow: 1; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0; background-color: rgb(42, 42, 42);">
+                <engine:VisualElement name="SceneItem" class="scene-toggle" style="flex-grow: 1;">
+                    <Concept.UI.CustomToggle is-label-left="false" checked="false" label="Test Scene" name="CustomToggle" style="flex-direction: row-reverse; align-self: flex-start; align-items: center;" />
+                </engine:VisualElement>
+                <engine:VisualElement name="SceneItem" class="scene-toggle" style="flex-grow: 1;">
+                    <Concept.UI.CustomToggle is-label-left="false" checked="false" label="Test Scene" name="CustomToggle" style="flex-direction: row-reverse; align-self: flex-start; align-items: center;" />
+                </engine:VisualElement>
+                <engine:VisualElement name="SceneItem" class="scene-toggle" style="flex-grow: 1;">
+                    <Concept.UI.CustomToggle is-label-left="false" checked="false" label="Test Scene" name="CustomToggle" style="flex-direction: row-reverse; align-self: flex-start; align-items: center;" />
                 </engine:VisualElement>
             </engine:ScrollView>
         </engine:VisualElement>
@@ -30,7 +35,11 @@
                     <engine:Button text="Select" name="ButtonSelectPath" class="button" style="position: relative;" />
                 </engine:VisualElement>
                 <engine:VisualElement style="flex-grow: 1; align-self: stretch;" />
-                <Concept.UI.CustomToggle text="Upload After Build" name="AutoUploadToggle" checked="false" style="flex-direction: row-reverse; align-self: flex-end;" />
+                <Concept.UI.CustomToggle name="AutoUploadToggle" label="Upload after build" value="true" toggle-on-label-click="true" style="align-self: flex-end; flex-direction: row;">
+                    <Bindings>
+                        <engine:DataBinding property="value" data-source-path="m_uploadAfterBuild" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
+                    </Bindings>
+                </Concept.UI.CustomToggle>
             </engine:VisualElement>
         </engine:VisualElement>
         <engine:Button text="Build" name="ButtonBuild" class="button" style="align-self: flex-end;" />
