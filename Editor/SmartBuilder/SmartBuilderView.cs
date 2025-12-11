@@ -1,7 +1,10 @@
 ﻿#if UNITY_EDITOR
 using Concept.UI;
+using log4net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -14,6 +17,12 @@ namespace Concept.SmartTools.Editor
     {
         private const string UXNLClassName = "SmartBuilderView";
         private const string USSClassName = "smart-build";
+
+
+        private string m_accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
+        private string m_secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
+
+
 
         private TabNavigation m_tabNavigation;
 
@@ -93,6 +102,35 @@ namespace Concept.SmartTools.Editor
             m_buttonCancel.clicked += CancelCurrentProgress;
 
 
+            m_accessKeyField = this.Q<TextField>("AccessKeyTextField");
+            m_accessKeyField.value = m_accessKey;
+            m_accessKeyField.RegisterValueChangedCallback(evt =>
+            {
+                m_accessKey = evt.newValue;
+                Environment.SetEnvironmentVariable("AWS_ACCESS_KEY_ID", evt.newValue);
+            });
+            m_secretKeyField = this.Q<TextField>("SecretKeyTextField");
+            m_secretKeyField.value = m_secretKey;
+            m_secretKeyField.RegisterValueChangedCallback(evt =>
+            {
+               m_secretKey= evt.newValue;
+                Environment.SetEnvironmentVariable("AWS_SECRET_ACCESS_KEY", evt.newValue);
+            });
+
+
+            m_buttonUpload = this.Q<Button>("ButtonUpload");
+            m_buttonUpload.clicked += OnUploadClicked;
+
+            m_remotePortField = this.Q<TextField>("RemotePortTextField");
+            m_bucketNameField = this.Q<TextField>("BucketNameTextField");
+
+
+            this.RegisterCallback<AttachToPanelEvent>(evt => {
+
+                m_progressBar.style.scale = new Vector2(0, 1f);
+
+            });
+
             /*
                         m_tabNavigation.OnTabSelect += UpdatePanels;
             m_scenesPanel = this.Q<VisualElement>("ScenesPanel");
@@ -129,7 +167,6 @@ namespace Concept.SmartTools.Editor
                         {
                             SmartBuilderConfig.uploadSettings.uploadTarget = (SmartUploaderSettings.UploadTarget)evt.newValue;
                         });
-                        m_remotePortField = this.Q<TextField>("RemotePortTextField");
                         m_remotePortField.RegisterValueChangedCallback(evt =>
                         {
                             if (int.TryParse(evt.newValue, out int port))
@@ -141,22 +178,11 @@ namespace Concept.SmartTools.Editor
                                 m_remotePortField.value = evt.previousValue;
                             }
                         });
-                        m_bucketNameField = this.Q<TextField>("BucketNameTextField");
                         m_bucketNameField.RegisterValueChangedCallback(evt =>
                         {
                             SmartBuilderConfig.uploadSettings.awsBucketName = evt.newValue;
                         });
-                        m_accessKeyField = this.Q<TextField>("AccessKeyTextField");
-                        m_accessKeyField.RegisterValueChangedCallback(evt =>
-                        {
-                        });
-                        m_secretKeyField = this.Q<TextField>("SecretKeyTextField");
-                        m_secretKeyField.RegisterValueChangedCallback(evt =>
-                        {
-                        });
 
-                        m_buttonUpload = this.Q<Button>("ButtonUpload");
-                        m_buttonUpload.clicked += OnUploadClicked;
 
                         UpdatePanels(m_tabNavigation.index);
             */
@@ -171,47 +197,53 @@ namespace Concept.SmartTools.Editor
         {
             if (!ValidateBuildSettings()) return;
 
-            //Check current build target
 
-            if (SmartBuilderConfig.buildSettings.buildTarget != EditorUserBuildSettings.activeBuildTarget)
-            {
-                bool changeBuildTarget = EditorUtility.DisplayDialog(
-                   "Incompatible Build Platforms",
-                   $"Current build target is {EditorUserBuildSettings.activeBuildTarget}. Do you want to switch to {SmartBuilderConfig.buildSettings.buildTarget}?", "Yes", "No"
-               );
-
-                if (changeBuildTarget)
-                {
-                    EditorUserBuildSettings.SwitchActiveBuildTarget(SmartBuilderConfig.buildSettings.buildTarget);
-
-                }
-                else
-                    SmartBuilderConfig.buildSettings.buildTarget = EditorUserBuildSettings.activeBuildTarget;
-                    return;
-            }
-
+            bool buildSuccess = SmartBuilder.Build();
+            /*
             m_progressStatusLabel.text = "Building Project";
             m_progressPanel.style.display = DisplayStyle.None;
             m_progressLabel.text = "See building dialog status...";
             m_progressOverlay.style.display = DisplayStyle.Flex;
-
-            SmartBuilder.Build();
-
+            
             m_progressOverlay.style.display = DisplayStyle.None;
+            */
 
-            if (SmartBuilderConfig.uploadAfterBuild)
+
+            if (buildSuccess && SmartBuilderConfig.uploadAfterBuild)
             {
                 m_tabNavigation.SelectIndex(2);
                 OnUploadClicked();
             }
 
         }
-        private void OnUploadClicked()
+        private async void OnUploadClicked()
         {
+            if (!ValidateUploadSettings()) return;
+
+
+            SmartUploader uploader = new SmartUploader(m_accessKey, m_secretKey, SmartBuilderConfig.uploadSettings.awsBucketName);
+
+            uploader.OnStatusChanged += (status) =>
+            {
+                m_progressLabel.text = status;
+            };
+
+            uploader.OnProgressChanged += (perc) => {
+
+                m_progressBar.style.scale = new Vector2(perc, 1f);
+
+            };
+
             m_progressStatusLabel.text = "Uploading";
             m_progressPanel.style.display = DisplayStyle.Flex;
             m_progressLabel.text = "Sending files to remote repository...";
             m_progressOverlay.style.display = DisplayStyle.Flex;
+            string rootPath = SmartBuilderConfig.buildSettings.buildPath + "/" + SmartBuilderConfig.buildSettings.buildTarget;
+            await uploader.UploadFilesAsync(rootPath, $"{SmartBuilderConfig.uploadSettings.awsRemotePort}/");
+
+            await Task.Delay(1000);
+            m_progressOverlay.style.display = DisplayStyle.None;
+
         }
         void LoadSceneList(ScrollView scrollView)
         {
@@ -251,6 +283,28 @@ namespace Concept.SmartTools.Editor
         bool ValidateBuildSettings()
         {
 
+
+            //Check current build target
+
+            if (SmartBuilderConfig.buildSettings.buildTarget != EditorUserBuildSettings.activeBuildTarget)
+            {
+                bool changeBuildTarget = EditorUtility.DisplayDialog(
+                   "Incompatible Build Platforms",
+                   $"Current build target is {EditorUserBuildSettings.activeBuildTarget}. Do you want to switch to {SmartBuilderConfig.buildSettings.buildTarget}?", "Yes", "No"
+               );
+
+                if (changeBuildTarget)
+                {
+                    EditorUserBuildSettings.SwitchActiveBuildTarget(SmartBuilderConfig.buildSettings.buildTarget);
+
+                }
+                else
+                    SmartBuilderConfig.buildSettings.buildTarget = EditorUserBuildSettings.activeBuildTarget;
+                return false;
+            }
+
+
+
             if (SmartBuilderConfig.buildSettings.buildTarget == BuildTarget.NoTarget)
             {
                 EditorUtility.DisplayDialog("Smart Builder Error", "Select a Build Target!", "OK");
@@ -270,7 +324,7 @@ namespace Concept.SmartTools.Editor
             // resolve o caminho absoluto
             string fullPath = Path.IsPathRooted(buildPath)
                 ? Path.GetFullPath(buildPath)
-                : Path.GetFullPath(Path.Combine(Application.dataPath, buildPath));
+                : Path.GetFullPath(Path.Combine(Application.dataPath,"..", buildPath));
 
             // se não existir ou estiver vazio, abre janela
             if (string.IsNullOrEmpty(buildPath) || !Directory.Exists(fullPath))
@@ -285,6 +339,62 @@ namespace Concept.SmartTools.Editor
                 }
                 SmartBuilderConfig.buildSettings.buildPath = newPath;
             }
+
+
+            return true;
+        }
+
+        bool ValidateUploadSettings()
+        {
+
+            Version currentVersion = new Version(PlayerSettings.bundleVersion);
+            Version lastVersion = new Version(SmartBuilderConfig.uploadSettings.lastVersion);
+
+            if (currentVersion <= lastVersion)
+            {
+
+                Version desiredVersion = new Version(lastVersion.Major, lastVersion.Minor, lastVersion.Build + 1);
+
+                bool incrementAndBuildVersion = EditorUtility.DisplayDialog(
+   "Upload Build Version Error",
+   $"Current build version '{currentVersion}' must be higher than last build version. You need build a new incremented version! Do you want to increment and build it to '{desiredVersion}'?", "Yes", "No"
+);
+
+
+                if (incrementAndBuildVersion)
+                {
+                    PlayerSettings.bundleVersion = desiredVersion.ToString();
+                    m_tabNavigation.SelectIndex(1);
+                    OnBuildClicked();
+                }
+                return false;
+            }
+
+
+            if (string.IsNullOrEmpty(SmartBuilderConfig.uploadSettings.awsBucketName))
+            {
+                EditorUtility.DisplayDialog("Smart Uploader Error", "AWS Bucket Name is required!", "OK");
+                m_tabNavigation.SelectIndex(2);
+                m_bucketNameField.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(m_accessKey))
+            {
+                EditorUtility.DisplayDialog("Smart Uploader Error", "AWS Access Key is required!", "OK");
+                m_tabNavigation.SelectIndex(2);
+                m_accessKeyField.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(m_secretKey))
+            {
+                EditorUtility.DisplayDialog("Smart Uploader Error", "AWS Secret Key is required!", "OK");
+                m_tabNavigation.SelectIndex(2);
+                m_secretKeyField.Focus();
+                return false;
+            }
+
 
 
             return true;

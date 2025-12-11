@@ -61,6 +61,8 @@ namespace Concept.SmartTools
     [Serializable]
     public class SmartBuilderSettings
     {
+        //[HideInInspector]
+        public string lastVersion = "0.0.0";
         public BuildTarget buildTarget = BuildTarget.NoTarget;
         [PathPicker("Builds")]
         public string buildPath;
@@ -72,6 +74,8 @@ namespace Concept.SmartTools
     [Serializable]
     public class SmartUploaderSettings
     {
+       // [HideInInspector]
+        public string lastVersion = "0.0.0";
         public BuildType buildType = BuildType.DEVELOPMENT;
         public enum UploadTarget { SFTP, AWSS3 }
         public UploadTarget uploadTarget;

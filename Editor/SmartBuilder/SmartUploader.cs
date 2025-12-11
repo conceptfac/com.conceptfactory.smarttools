@@ -1,13 +1,15 @@
 #if UNITY_EDITOR
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using UnityEngine;
+using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
-using System.Collections.Generic;
 using Renci.SshNet; // Added namespace for SftpClient
 using Renci.SshNet.Sftp;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using UnityEngine;
 namespace Concept.SmartTools.Editor
 {
 
@@ -63,15 +65,35 @@ namespace Concept.SmartTools.Editor
             m_s3Client = amazonS3;
             m_uploadTarget = UploadTarget.AWSS3;
         }
+        public SmartUploader(string accessKey, string secretKey, string bucketName, RegionEndpoint region = default)
+        {
+
+            if (region == null || region == default) region = RegionEndpoint.USEast1;
+                region = RegionEndpoint.USEast1;
+            m_bucketName = bucketName;
+
+            var config = new AmazonS3Config
+            {
+                RegionEndpoint = region
+            };
+
+            m_s3Client = new AmazonS3Client(accessKey, secretKey, config);
+
+            m_uploadTarget = UploadTarget.AWSS3;
+        }
+
 
         /// <summary>
         /// Uploads multiple files asynchronously to the configured target.
         /// </summary>
         /// <param name="localPaths">Array of local file paths.</param>
         /// <param name="remoteDir">Remote directory path.</param>
+        public async Task UploadFilesAsync(string rootPath, string remoteDir, bool cleanUpCache = false) => await UploadFilesAsync(GetAllFilesRecursively(rootPath), remoteDir, cleanUpCache);
+
+
         public async Task UploadFilesAsync(List<(string localPath, string remotePath)> files, string remoteDir, bool cleanUpCache)
         {
-            int total = files.Count;
+            int totalFiles = files.Count;
 
             if (m_uploadTarget == UploadTarget.SFTP)
             {
@@ -88,7 +110,7 @@ namespace Concept.SmartTools.Editor
                     if (!client.Exists(remoteDir))
                         client.CreateDirectory(remoteDir);
 
-                    if(cleanUpCache) await DeleteAsync(client, remoteDir);
+                    if (cleanUpCache) await DeleteAsync(client, remoteDir);
                 }
                 finally
                 {
@@ -96,21 +118,83 @@ namespace Concept.SmartTools.Editor
                 }
             }
 
-            for (int i = 0; i < total; i++)
+            for (int i = 0; i < totalFiles; i++)
             {
                 var (localPath, remotePath) = files[i];
-                OnStatusChanged?.Invoke($"[SmartUpload] Uploading {remotePath} ({i + 1}/{total})");
+
+                OnStatusChanged?.Invoke($"[SmartUpload] Uploading {remotePath} ({i + 1}/{totalFiles})");
 
                 if (m_uploadTarget == UploadTarget.SFTP)
                     await UploadSFTPAsync(localPath, Path.Combine(remoteDir, remotePath).Replace("\\", "/"));
                 else if (m_uploadTarget == UploadTarget.AWSS3)
                     await UploadAWSAsync(localPath, Path.Combine(remoteDir, remotePath).Replace("\\", "/"));
 
-                OnProgressChanged?.Invoke((i + 1f) / total);
+                // Progresso de 0 a 1 baseado na quantidade de arquivos
+                float progress = (i + 1f) / totalFiles;
+                OnProgressChanged?.Invoke(progress);
             }
 
             OnStatusChanged?.Invoke("[SmartUpload] Upload finished!");
         }
+
+
+
+
+        public async Task UploadFilesAsyncGetBytes(List<(string localPath, string remotePath)> files, string remoteDir, bool cleanUpCache)
+        {
+            int totalFiles = files.Count;
+            byte[][] allFilesBytes = await GetAllFilesBytesAsync(files);
+
+            // Soma total de bytes de todos os arquivos
+            long totalBytes = allFilesBytes.Sum(b => (long)b.Length);
+            long bytesUploaded = 0;
+
+            if (m_uploadTarget == UploadTarget.SFTP)
+            {
+                using var client = new SftpClient(m_host, m_port, m_user, m_password);
+                try
+                {
+                    client.Connect();
+                    if (!client.IsConnected)
+                    {
+                        OnStatusChanged?.Invoke("[SmartUpload] Could not connect to SFTP server.");
+                        return;
+                    }
+
+                    if (!client.Exists(remoteDir))
+                        client.CreateDirectory(remoteDir);
+
+                    if (cleanUpCache) await DeleteAsync(client, remoteDir);
+                }
+                finally
+                {
+                    client.Disconnect();
+                }
+            }
+            else
+            {
+                for (int i = 0; i < totalFiles; i++)
+                {
+                    var (localPath, remotePath) = files[i];
+                    byte[] fileBytes = allFilesBytes[i];
+
+                    OnStatusChanged?.Invoke($"[SmartUpload] Uploading {remotePath} ({i + 1}/{totalFiles})");
+
+                    if (m_uploadTarget == UploadTarget.SFTP)
+                        await UploadSFTPAsync(localPath, Path.Combine(remoteDir, remotePath).Replace("\\", "/"));
+                    else if (m_uploadTarget == UploadTarget.AWSS3)
+                        await UploadAWSAsync(localPath, Path.Combine(remoteDir, remotePath).Replace("\\", "/"));
+
+                    // Atualiza progresso baseado no tamanho do arquivo enviado
+                    bytesUploaded += fileBytes.Length;
+                    float progress = (float)bytesUploaded / totalBytes;
+                    OnProgressChanged?.Invoke(progress);
+                }
+            }
+
+            OnStatusChanged?.Invoke("[SmartUpload] Upload finished!");
+        }
+
 
 
         /// <summary>
@@ -274,14 +358,60 @@ namespace Concept.SmartTools.Editor
                 ".gif" => "image/gif",
                 ".webp" => "image/webp",
                 ".json" => "application/json",
+                ".symbols.json" => "application/json",
                 ".txt" => "text/plain",
                 ".js" => "application/javascript",
                 ".html" => "text/html",
                 ".css" => "text/css",
+                ".uxml" => "text/xml",
+                ".uss" => "text/css",
+                ".wasm" => "application/wasm",
+                ".data" => "application/octet-stream",
+                ".mem" => "application/octet-stream",
                 ".br" => "application/octet-stream",
+                "" => "application/octet-stream", // files without extension
                 _ => "application/octet-stream",
             };
         }
+
+
+        private List<(string localPath, string remotePath)> GetAllFilesRecursively(string rootPath)
+        {
+            var files = new List<(string, string)>();
+            int rootLength = rootPath.Length + 1; // +1 pra remover a barra final
+
+            foreach (string file in Directory.GetFiles(rootPath, "*.*", SearchOption.AllDirectories))
+            {
+                string relativePath = file.Substring(rootLength); // caminho relativo à pasta root
+                files.Add((file, relativePath.Replace("\\", "/"))); // remotePath sempre com / 
+            }
+
+            return files;
+        }
+
+
+        public static async Task<byte[][]> GetAllFilesBytesAsync(List<(string localPath, string remotePath)> files)
+        {
+            byte[][] allBytes = new byte[files.Count][];
+
+            for (int i = 0; i < files.Count; i++)
+            {
+                var (localPath, remotePath) = files[i];
+
+                if (File.Exists(localPath))
+                {
+                    allBytes[i] = await File.ReadAllBytesAsync(localPath);
+                }
+                else
+                {
+                    Debug.LogWarning($"File not found: {localPath}");
+                    allBytes[i] = Array.Empty<byte>(); // ou null, depende do que tu quer
+                }
+            }
+
+            return allBytes;
+        }
+
     }
 }
 #endif

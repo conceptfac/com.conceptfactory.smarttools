@@ -13,8 +13,27 @@ namespace Concept.SmartTools.Editor
         /// Fired when the progress of the build changes (0..1).
         /// </summary>
         public static event Action<string> OnStatusChanged;
-        public static void Build()
+        public static bool Build()
         {
+
+            Version currentVersion = new Version(PlayerSettings.bundleVersion);
+            Version lastVersion = new Version(SmartBuilderConfig.buildSettings.lastVersion);
+
+            if (currentVersion <= lastVersion)
+            {
+
+                Version desiredVersion = new Version(lastVersion.Major, lastVersion.Minor, lastVersion.Build + 1);
+
+                bool incrementBuildVersion = EditorUtility.DisplayDialog(
+   "Build Version Error",
+   $"Current build version '{currentVersion}' must be higher than last build version. Do you want to increment it to '{desiredVersion}'?", "Yes", "No"
+);
+
+
+                if (!incrementBuildVersion) return false;
+                PlayerSettings.bundleVersion = desiredVersion.ToString();
+            }
+
 
             BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
             buildPlayerOptions.scenes = SmartBuilderConfig.buildSettings.scenesToBuild.ToArray();
@@ -38,7 +57,7 @@ namespace Concept.SmartTools.Editor
                         break;
                 }
 
-                if(Directory.Exists(buildPlayerOptions.locationPathName))
+                if (Directory.Exists(buildPlayerOptions.locationPathName))
                     Directory.Delete(buildPlayerOptions.locationPathName, true);
 
                 Directory.CreateDirectory(buildPlayerOptions.locationPathName);
@@ -47,13 +66,16 @@ namespace Concept.SmartTools.Editor
 
                 Debug.Log("[SmartBuilder] Building complete!");
                 OnStatusChanged?.Invoke("[SmartBuilder] Building complete!");
-
+                SmartBuilderConfig.buildSettings.lastVersion = PlayerSettings.bundleVersion;
+                EditorUtility.SetDirty(SmartBuilderConfig.instance);
+                AssetDatabase.SaveAssets();
+                return true;
 
             }
             catch (Exception e)
             {
                 Debug.LogError("[SmartBuilder] Building error: " + e.Message);
-                return;
+                return false;
             }
         }
 
