@@ -28,7 +28,7 @@ namespace Concept.SmartTools.Editor
 
                 if (EditorGUI.LinkButton(rect, content))
                 {
-                    SmartBuilderWindow.Open();
+                    SmartBuilderWindow.Open(1);
                 }
 
                 GUILayout.Space(8);
@@ -43,9 +43,16 @@ namespace Concept.SmartTools.Editor
                     //GameManager.Config.buildType = buildType;
                 }
 
-                if (GUILayout.Button(new GUIContent("BUILD", "Hold for Build Config"), EditorStyles.toolbarButton)) { }
+                if (GUILayout.Button(new GUIContent("BUILD", "Hold for Build Config"), EditorStyles.toolbarButton)) {
+                    SmartBuilder.Build();
+                
+                }
                 if (GUILayout.Button(new GUIContent("PUBLISH", "Hold for Publish Config"), EditorStyles.toolbarButton))
                 {
+
+                    SmartBuilderWindow.Open(2);
+
+                    return;
                     GenericMenu menu = new GenericMenu();
                     menu.AddItem(new GUIContent("Opção 1"), false, () => Debug.Log("Opção 1 selecionada"));
                     menu.AddItem(new GUIContent("Opção 2"), false, () => Debug.Log("Opção 2 selecionada"));

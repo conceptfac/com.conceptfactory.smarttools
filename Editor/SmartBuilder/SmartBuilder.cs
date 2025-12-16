@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using Concept.UI;
 using System;
 using System.IO;
 using UnityEditor;
@@ -15,6 +16,12 @@ namespace Concept.SmartTools.Editor
         public static event Action<string> OnStatusChanged;
         public static bool Build()
         {
+            if (!ValidateBuildSettings())
+            {
+                SmartBuilderWindow.Open(1);
+                return false;
+
+            }
 
             Version currentVersion = new Version(PlayerSettings.bundleVersion);
             Version lastVersion = new Version(SmartBuilderConfig.buildSettings.lastVersion);
@@ -76,6 +83,108 @@ namespace Concept.SmartTools.Editor
             {
                 Debug.LogError("[SmartBuilder] Building error: " + e.Message);
                 return false;
+            }
+        }
+
+
+        static bool ValidateBuildSettings()
+        {
+
+
+            //Check current build target
+
+            if (SmartBuilderConfig.buildSettings.buildTarget != EditorUserBuildSettings.activeBuildTarget)
+            {
+                bool changeBuildTarget = EditorUtility.DisplayDialog(
+                   "Incompatible Build Platforms",
+                   $"Current build target is {EditorUserBuildSettings.activeBuildTarget}. Do you want to switch to {SmartBuilderConfig.buildSettings.buildTarget}?", "Yes", "No"
+               );
+
+                if (changeBuildTarget)
+                {
+                    EditorUserBuildSettings.SwitchActiveBuildTarget(SmartBuilderConfig.buildSettings.buildTarget);
+
+                }
+                else
+                    SmartBuilderConfig.buildSettings.buildTarget = EditorUserBuildSettings.activeBuildTarget;
+                return false;
+            }
+
+
+
+            if (SmartBuilderConfig.buildSettings.buildTarget == BuildTarget.NoTarget)
+            {
+                EditorUtility.DisplayDialog("Smart Builder Error", "Select a Build Target!", "OK");
+                SmartBuilderWindow.Open(1);
+                return false;
+            }
+
+            if (SmartBuilderConfig.buildSettings.scenesToBuild.Count == 0)
+            {
+                EditorUtility.DisplayDialog("Smart Builder Error", "None scenes to build selected!", "OK");
+                SmartBuilderWindow.Open(0);
+                return false;
+            }
+
+            string buildPath = SmartBuilderConfig.buildSettings.buildPath;
+
+            // resolve o caminho absoluto
+            string fullPath = Path.IsPathRooted(buildPath)
+                ? Path.GetFullPath(buildPath)
+                : Path.GetFullPath(Path.Combine(Application.dataPath, "..", buildPath));
+
+            // se não existir ou estiver vazio, abre janela
+            if (string.IsNullOrEmpty(buildPath) || !Directory.Exists(fullPath))
+            {
+
+                string newPath = LoadPath();
+
+                if (string.IsNullOrEmpty(newPath))
+                {
+                    Debug.LogWarning("[SmartBuilder] Build canceled: no folder selected.");
+                    return false;
+                }
+                SmartBuilderConfig.buildSettings.buildPath = newPath;
+            }
+
+
+            return true;
+        }
+
+
+        public static void SelectPath()
+        {
+            string newPath = LoadPath();
+            if (!string.IsNullOrEmpty(newPath))
+            {
+                SmartBuilderConfig.buildSettings.buildPath = newPath;
+            }
+        }
+
+        public static string LoadPath()
+        {
+
+            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+
+            string buildDir = Path.Combine(projectRoot, "Build");
+            if (!Directory.Exists(buildDir))
+                Directory.CreateDirectory(buildDir);
+
+            string newPath = EditorUtility.SaveFolderPanel("Select Build Folder", buildDir, "");
+
+
+            var fullPath = Path.GetFullPath(newPath);
+
+            // se estiver dentro do projeto, salva relativo
+            if (fullPath.StartsWith(projectRoot))
+            {
+                string relative = Path.GetRelativePath(projectRoot, fullPath).Replace("\\", "/");
+                if (!relative.StartsWith("../")) relative = "../" + relative;
+                return relative;
+            }
+            else
+            {
+                return fullPath;
             }
         }
 

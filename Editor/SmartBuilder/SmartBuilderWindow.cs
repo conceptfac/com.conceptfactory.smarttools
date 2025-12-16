@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using Concept.SmartTools.Editor;
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,6 +9,18 @@ namespace Concept.UI
     public class SmartBuilderWindow : EditorWindow
     {
         private SmartBuilderView m_view;
+
+        public static Action<int> OpenSmartWindow;
+
+        public static void Open(int tabIndex)
+        {
+            if (OpenSmartWindow != null)
+            {
+                OpenSmartWindow.Invoke(tabIndex);
+                return;
+            }
+            Open();
+        }
 
         [MenuItem("Window/Concept Factory/Smart Builder")]
         public static void Open()

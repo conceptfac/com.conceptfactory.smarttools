@@ -19,8 +19,8 @@ namespace Concept.SmartTools.Editor
         private const string USSClassName = "smart-build";
 
 
-        private string m_accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
-        private string m_secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
+        private string m_accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID", EnvironmentVariableTarget.User);
+        private string m_secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY", EnvironmentVariableTarget.User);
 
 
 
@@ -101,20 +101,24 @@ namespace Concept.SmartTools.Editor
             m_buttonCancel = this.Q<Button>("ButtonCancel");
             m_buttonCancel.clicked += CancelCurrentProgress;
 
+      //  string m_accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
+      //  string m_secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
 
-            m_accessKeyField = this.Q<TextField>("AccessKeyTextField");
+
+        m_accessKeyField = this.Q<TextField>("AccessKeyTextField");
             m_accessKeyField.value = m_accessKey;
             m_accessKeyField.RegisterValueChangedCallback(evt =>
             {
                 m_accessKey = evt.newValue;
-                Environment.SetEnvironmentVariable("AWS_ACCESS_KEY_ID", evt.newValue);
+                Environment.SetEnvironmentVariable("AWS_ACCESS_KEY_ID", evt.newValue, EnvironmentVariableTarget.User);
             });
             m_secretKeyField = this.Q<TextField>("SecretKeyTextField");
             m_secretKeyField.value = m_secretKey;
             m_secretKeyField.RegisterValueChangedCallback(evt =>
             {
                m_secretKey= evt.newValue;
-                Environment.SetEnvironmentVariable("AWS_SECRET_ACCESS_KEY", evt.newValue);
+                Environment.SetEnvironmentVariable("AWS_SECRET_ACCESS_KEY", evt.newValue, EnvironmentVariableTarget.User);
+                PlayerPrefs.Save();
             });
 
 
@@ -195,26 +199,13 @@ namespace Concept.SmartTools.Editor
         }
         private void OnBuildClicked()
         {
-            if (!ValidateBuildSettings()) return;
-
-
             bool buildSuccess = SmartBuilder.Build();
-            /*
-            m_progressStatusLabel.text = "Building Project";
-            m_progressPanel.style.display = DisplayStyle.None;
-            m_progressLabel.text = "See building dialog status...";
-            m_progressOverlay.style.display = DisplayStyle.Flex;
-            
-            m_progressOverlay.style.display = DisplayStyle.None;
-            */
-
 
             if (buildSuccess && SmartBuilderConfig.uploadAfterBuild)
             {
                 m_tabNavigation.SelectIndex(2);
                 OnUploadClicked();
             }
-
         }
         private async void OnUploadClicked()
         {
@@ -280,69 +271,6 @@ namespace Concept.SmartTools.Editor
             m_progressOverlay.style.display = DisplayStyle.None;
         }
 
-        bool ValidateBuildSettings()
-        {
-
-
-            //Check current build target
-
-            if (SmartBuilderConfig.buildSettings.buildTarget != EditorUserBuildSettings.activeBuildTarget)
-            {
-                bool changeBuildTarget = EditorUtility.DisplayDialog(
-                   "Incompatible Build Platforms",
-                   $"Current build target is {EditorUserBuildSettings.activeBuildTarget}. Do you want to switch to {SmartBuilderConfig.buildSettings.buildTarget}?", "Yes", "No"
-               );
-
-                if (changeBuildTarget)
-                {
-                    EditorUserBuildSettings.SwitchActiveBuildTarget(SmartBuilderConfig.buildSettings.buildTarget);
-
-                }
-                else
-                    SmartBuilderConfig.buildSettings.buildTarget = EditorUserBuildSettings.activeBuildTarget;
-                return false;
-            }
-
-
-
-            if (SmartBuilderConfig.buildSettings.buildTarget == BuildTarget.NoTarget)
-            {
-                EditorUtility.DisplayDialog("Smart Builder Error", "Select a Build Target!", "OK");
-                m_tabNavigation.SelectIndex(1);
-                return false;
-            }
-
-            if (SmartBuilderConfig.buildSettings.scenesToBuild.Count == 0)
-            {
-                EditorUtility.DisplayDialog("Smart Builder Error", "None scenes to build selected!", "OK");
-                m_tabNavigation.SelectIndex(0);
-                return false;
-            }
-
-            string buildPath = SmartBuilderConfig.buildSettings.buildPath;
-
-            // resolve o caminho absoluto
-            string fullPath = Path.IsPathRooted(buildPath)
-                ? Path.GetFullPath(buildPath)
-                : Path.GetFullPath(Path.Combine(Application.dataPath,"..", buildPath));
-
-            // se não existir ou estiver vazio, abre janela
-            if (string.IsNullOrEmpty(buildPath) || !Directory.Exists(fullPath))
-            {
-
-                string newPath = LoadPath();
-
-                if (string.IsNullOrEmpty(newPath))
-                {
-                    Debug.LogWarning("[SmartBuilder] Build canceled: no folder selected.");
-                    return false;
-                }
-                SmartBuilderConfig.buildSettings.buildPath = newPath;
-            }
-
-
-            return true;
-        }
 
         bool ValidateUploadSettings()
         {
@@ -400,41 +328,15 @@ namespace Concept.SmartTools.Editor
             return true;
         }
 
-        private void SelectPath()
+
+
+
+
+        public void SelectTab(int tabIndex)
         {
-            string newPath = LoadPath();
-            if (!string.IsNullOrEmpty(newPath))
-            {
-                m_builderPathField.value = newPath;
-            }
+            m_tabNavigation.SelectIndex(tabIndex);
         }
 
-        private string LoadPath()
-        {
-
-            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-
-            string buildDir = Path.Combine(projectRoot, "Build");
-            if (!Directory.Exists(buildDir))
-                Directory.CreateDirectory(buildDir);
-
-            string newPath = EditorUtility.SaveFolderPanel("Select Build Folder", buildDir, "");
-
-
-            var fullPath = Path.GetFullPath(newPath);
-
-            // se estiver dentro do projeto, salva relativo
-            if (fullPath.StartsWith(projectRoot))
-            {
-                string relative = Path.GetRelativePath(projectRoot, fullPath).Replace("\\", "/");
-                if (!relative.StartsWith("../")) relative = "../" + relative;
-                return relative;
-            }
-            else
-            {
-                return fullPath;
-            }
-        }
     }
 }
 #endif

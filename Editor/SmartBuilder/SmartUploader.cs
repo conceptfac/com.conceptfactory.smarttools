@@ -83,16 +83,57 @@ namespace Concept.SmartTools.Editor
         }
 
 
+        public async Task DeleteS3FolderAsync(string bucketName, string prefix)
+        {
+            // Normaliza para garantir que termina com '/'
+            if (!prefix.EndsWith("/"))
+                prefix += "/";
+
+            var request = new ListObjectsV2Request
+            {
+                BucketName = bucketName,
+                Prefix = prefix
+            };
+
+
+            ListObjectsV2Response response;
+            do
+            {
+                response = await m_s3Client.ListObjectsV2Async(request);
+
+                if (response.S3Objects.Count > 0)
+                {
+                    var deleteRequest = new DeleteObjectsRequest
+                    {
+                        BucketName = bucketName,
+                        Objects = response.S3Objects
+                            .Select(o => new KeyVersion { Key = o.Key })
+                            .ToList()
+                    };
+
+                    await m_s3Client.DeleteObjectsAsync(deleteRequest);
+                }
+
+                request.ContinuationToken = response.NextContinuationToken;
+
+            } while (response.IsTruncated);
+        }
+
+
+
         /// <summary>
         /// Uploads multiple files asynchronously to the configured target.
         /// </summary>
         /// <param name="localPaths">Array of local file paths.</param>
         /// <param name="remoteDir">Remote directory path.</param>
-        public async Task UploadFilesAsync(string rootPath, string remoteDir, bool cleanUpCache = false) => await UploadFilesAsync(GetAllFilesRecursively(rootPath), remoteDir, cleanUpCache);
-
+        public async Task UploadFilesAsync(string rootPath, string remoteDir, bool cleanUpCache = false)
+        {
+            await UploadFilesAsync(GetAllFilesRecursively(rootPath), remoteDir, cleanUpCache);
+        }
 
         public async Task UploadFilesAsync(List<(string localPath, string remotePath)> files, string remoteDir, bool cleanUpCache)
         {
+            await DeleteS3FolderAsync(m_bucketName, m_port.ToString());
             int totalFiles = files.Count;
 
             if (m_uploadTarget == UploadTarget.SFTP)
@@ -136,8 +177,6 @@ namespace Concept.SmartTools.Editor
 
             OnStatusChanged?.Invoke("[SmartUpload] Upload finished!");
         }
-
-
 
 
         public async Task UploadFilesAsyncGetBytes(List<(string localPath, string remotePath)> files, string remoteDir, bool cleanUpCache)
@@ -376,6 +415,23 @@ namespace Concept.SmartTools.Editor
 
 
         private List<(string localPath, string remotePath)> GetAllFilesRecursively(string rootPath)
+        {
+            var files = new List<(string, string)>();
+
+            foreach (string file in Directory.GetFiles(rootPath, "*.*", SearchOption.AllDirectories))
+            {
+                string relativePath = Path.GetRelativePath(rootPath, file); // caminho relativo corretamente
+                string remotePath = relativePath.Replace("\\", "/");       // remotePath sempre com /
+
+                files.Add((file, remotePath));
+            }
+
+            return files;
+        }
+
+
+
+        private List<(string localPath, string remotePath)> GetAllFilesRecursively2(string rootPath)
         {
             var files = new List<(string, string)>();
             int rootLength = rootPath.Length + 1; // +1 pra remover a barra final
