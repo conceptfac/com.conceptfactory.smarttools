@@ -19,6 +19,9 @@ namespace Concept.SmartTools.Editor
     /// </summary>
     public class SmartUploader
     {
+        public static SmartUploaderSettings Settings => SmartBuilderConfig.instance?.m_uploadSettings;
+
+
         public enum UploadTarget { SFTP, AWSS3 }
         private UploadTarget m_uploadTarget;
 

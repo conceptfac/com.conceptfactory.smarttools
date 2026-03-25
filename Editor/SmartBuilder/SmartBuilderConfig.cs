@@ -23,8 +23,7 @@ namespace Concept.SmartTools
                 return m_instance;
             }
         }
-        [SerializeField] private SmartBuilderSettings m_buildSettings = new SmartBuilderSettings();
-        public static SmartBuilderSettings buildSettings => instance.m_buildSettings;
+        [SerializeField] internal SmartBuilderSettings m_buildSettings = new SmartBuilderSettings();
 
         [SerializeField] private bool m_uploadAfterBuild;
         public static bool uploadAfterBuild { get => instance.m_uploadAfterBuild; set { 
@@ -32,8 +31,7 @@ namespace Concept.SmartTools
             instance.m_uploadAfterBuild = value;
             } }
 
-        [SerializeField] private SmartUploaderSettings m_uploadSettings = new SmartUploaderSettings();
-        public static SmartUploaderSettings uploadSettings => instance.m_uploadSettings;
+        [SerializeField] internal SmartUploaderSettings m_uploadSettings = new SmartUploaderSettings();
         private static SmartBuilderConfig LoadSmartBuilderConfig()
         {
             string resourcesPath = "Assets/Resources/";

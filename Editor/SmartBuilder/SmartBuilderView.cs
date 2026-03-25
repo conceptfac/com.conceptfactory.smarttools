@@ -143,12 +143,12 @@ namespace Concept.SmartTools.Editor
                         m_buildTargetEnum = this.Q<EnumField>("BuildTargetEnum");
                         m_buildTargetEnum.RegisterValueChangedCallback(evt =>
                         {
-                            SmartBuilderConfig.buildSettings.buildTarget = (BuildTarget)evt.newValue;
+                            SmartBuilder.Settings.buildTarget = (BuildTarget)evt.newValue;
                         });
                         m_builderPathField = this.Q<TextField>("BuildPathTextField");
                         m_builderPathField.RegisterValueChangedCallback(evt =>
                         {
-                            SmartBuilderConfig.buildSettings.buildPath = evt.newValue;
+                            SmartBuilder.Settings.buildPath = evt.newValue;
                         });
 
                         m_buttonSelectPath = this.Q<Button>("ButtonSelectPath");
@@ -164,18 +164,18 @@ namespace Concept.SmartTools.Editor
                         m_ambientTypeEnum = this.Q<EnumField>("AmbientTypeEnum");
                         m_ambientTypeEnum.RegisterValueChangedCallback(evt =>
                         {
-                            SmartBuilderConfig.uploadSettings.buildType = (BuildType)evt.newValue;
+                            SmartUploader.Settings.buildType = (BuildType)evt.newValue;
                         });
                         m_uploadTargetEnum = this.Q<EnumField>("UploadTargetEnum");
                         m_uploadTargetEnum.RegisterValueChangedCallback(evt =>
                         {
-                            SmartBuilderConfig.uploadSettings.uploadTarget = (SmartUploaderSettings.UploadTarget)evt.newValue;
+                            SmartUploader.Settings.uploadTarget = (SmartUploaderSettings.UploadTarget)evt.newValue;
                         });
                         m_remotePortField.RegisterValueChangedCallback(evt =>
                         {
                             if (int.TryParse(evt.newValue, out int port))
                             {
-                                SmartBuilderConfig.uploadSettings.awsRemotePort = port;
+                                SmartUploader.Settings.awsRemotePort = port;
                             }
                             else
                             {
@@ -184,7 +184,7 @@ namespace Concept.SmartTools.Editor
                         });
                         m_bucketNameField.RegisterValueChangedCallback(evt =>
                         {
-                            SmartBuilderConfig.uploadSettings.awsBucketName = evt.newValue;
+                            SmartUploader.Settings.awsBucketName = evt.newValue;
                         });
 
 
@@ -212,7 +212,7 @@ namespace Concept.SmartTools.Editor
             if (!ValidateUploadSettings()) return;
 
 
-            SmartUploader uploader = new SmartUploader(m_accessKey, m_secretKey, SmartBuilderConfig.uploadSettings.awsBucketName);
+            SmartUploader uploader = new SmartUploader(m_accessKey, m_secretKey, SmartUploader.Settings.awsBucketName);
 
             uploader.OnStatusChanged += (status) =>
             {
@@ -229,8 +229,8 @@ namespace Concept.SmartTools.Editor
             m_progressPanel.style.display = DisplayStyle.Flex;
             m_progressLabel.text = "Sending files to remote repository...";
             m_progressOverlay.style.display = DisplayStyle.Flex;
-            string rootPath = SmartBuilderConfig.buildSettings.buildPath + "/" + SmartBuilderConfig.buildSettings.buildTarget;
-            await uploader.UploadFilesAsync(rootPath, $"{SmartBuilderConfig.uploadSettings.awsRemotePort}/");
+            string rootPath = SmartBuilder.Settings.buildPath + "/" + SmartBuilder.Settings.buildTarget;
+            await uploader.UploadFilesAsync(rootPath, $"{SmartUploader.Settings.awsRemotePort}/");
 
             await Task.Delay(1000);
             m_progressOverlay.style.display = DisplayStyle.None;
@@ -245,20 +245,20 @@ namespace Concept.SmartTools.Editor
                 sceneItem.AddToClassList("scene-toggle");
 
                 CustomToggle sceneToggle = new CustomToggle() { label = scene.path };
-                sceneToggle.SetValue(SmartBuilderConfig.buildSettings.scenesToBuild.Contains(scene.path));
+                sceneToggle.SetValue(SmartBuilder.Settings.scenesToBuild.Contains(scene.path));
                 sceneItem.Add(sceneToggle);
 
 
                 sceneToggle.OnToggleChanged += (c) =>
                 {
 
-                    bool contains = SmartBuilderConfig.buildSettings.scenesToBuild.Contains(scene.path);
+                    bool contains = SmartBuilder.Settings.scenesToBuild.Contains(scene.path);
 
                     if (c && !contains)
-                        SmartBuilderConfig.buildSettings.scenesToBuild.Add(scene.path);
+                        SmartBuilder.Settings.scenesToBuild.Add(scene.path);
                     else
                         if (!c && contains)
-                        SmartBuilderConfig.buildSettings.scenesToBuild.Remove(scene.path);
+                        SmartBuilder.Settings.scenesToBuild.Remove(scene.path);
 
                 };
 
@@ -276,7 +276,7 @@ namespace Concept.SmartTools.Editor
         {
 
             Version currentVersion = new Version(PlayerSettings.bundleVersion);
-            Version lastVersion = new Version(SmartBuilderConfig.uploadSettings.lastVersion);
+            Version lastVersion = new Version(SmartUploader.Settings.lastVersion);
 
             if (currentVersion <= lastVersion)
             {
@@ -299,7 +299,7 @@ namespace Concept.SmartTools.Editor
             }
 
 
-            if (string.IsNullOrEmpty(SmartBuilderConfig.uploadSettings.awsBucketName))
+            if (string.IsNullOrEmpty(SmartUploader.Settings.awsBucketName))
             {
                 EditorUtility.DisplayDialog("Smart Uploader Error", "AWS Bucket Name is required!", "OK");
                 m_tabNavigation.SelectIndex(2);

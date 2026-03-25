@@ -36,7 +36,7 @@ namespace Concept.SmartTools.Editor
                 // Usando um Popup (dropdown) do IMGUI
                 EditorGUI.BeginChangeCheck();
 
-                SmartBuilderConfig.uploadSettings.buildType = (BuildType)EditorGUILayout.EnumPopup(SmartBuilderConfig.uploadSettings.buildType, EditorStyles.toolbarPopup, GUILayout.Width(120));
+                SmartUploader.Settings.buildType = (BuildType)EditorGUILayout.EnumPopup(SmartUploader.Settings.buildType, EditorStyles.toolbarPopup, GUILayout.Width(120));
 
                 if (EditorGUI.EndChangeCheck())
                 {

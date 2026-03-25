@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using Concept.SmartTools;
 using Concept.UI;
 using System;
 using System.IO;
@@ -9,7 +10,7 @@ namespace Concept.SmartTools.Editor
 {
     public static class SmartBuilder
     {
-
+        public static SmartBuilderSettings Settings => SmartBuilderConfig.instance?.m_buildSettings;
         /// <summary>
         /// Fired when the progress of the build changes (0..1).
         /// </summary>
@@ -24,7 +25,7 @@ namespace Concept.SmartTools.Editor
             }
 
             Version currentVersion = new Version(PlayerSettings.bundleVersion);
-            Version lastVersion = new Version(SmartBuilderConfig.buildSettings.lastVersion);
+            Version lastVersion = new Version(Settings.lastVersion);
 
             if (currentVersion <= lastVersion)
             {
@@ -43,15 +44,15 @@ namespace Concept.SmartTools.Editor
 
 
             BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-            buildPlayerOptions.scenes = SmartBuilderConfig.buildSettings.scenesToBuild.ToArray();
+            buildPlayerOptions.scenes = Settings.scenesToBuild.ToArray();
             buildPlayerOptions.options = BuildOptions.None;
-            buildPlayerOptions.locationPathName = SmartBuilderConfig.buildSettings.buildPath + "/" + SmartBuilderConfig.buildSettings.buildTarget;
+            buildPlayerOptions.locationPathName = Settings.buildPath + "/" + Settings.buildTarget;
             try
             {
                 Debug.Log("[SmartBuilder] Start building.");
                 OnStatusChanged?.Invoke("[SmartBuilder] Start building.");
 
-                switch (SmartBuilderConfig.buildSettings.buildTarget)
+                switch (Settings.buildTarget)
                 {
                     case BuildTarget.LinuxHeadlessSimulation:
                     case BuildTarget.StandaloneLinux64:
@@ -60,7 +61,7 @@ namespace Concept.SmartTools.Editor
                         buildPlayerOptions.locationPathName += "/run.x86_64";
                         break;
                     default:
-                        buildPlayerOptions.target = SmartBuilderConfig.buildSettings.buildTarget;
+                        buildPlayerOptions.target = Settings.buildTarget;
                         break;
                 }
 
@@ -73,7 +74,7 @@ namespace Concept.SmartTools.Editor
 
                 Debug.Log("[SmartBuilder] Building complete!");
                 OnStatusChanged?.Invoke("[SmartBuilder] Building complete!");
-                SmartBuilderConfig.buildSettings.lastVersion = PlayerSettings.bundleVersion;
+                Settings.lastVersion = PlayerSettings.bundleVersion;
                 EditorUtility.SetDirty(SmartBuilderConfig.instance);
                 AssetDatabase.SaveAssets();
                 return true;
@@ -93,40 +94,40 @@ namespace Concept.SmartTools.Editor
 
             //Check current build target
 
-            if (SmartBuilderConfig.buildSettings.buildTarget != EditorUserBuildSettings.activeBuildTarget)
+            if (Settings.buildTarget != EditorUserBuildSettings.activeBuildTarget)
             {
                 bool changeBuildTarget = EditorUtility.DisplayDialog(
                    "Incompatible Build Platforms",
-                   $"Current build target is {EditorUserBuildSettings.activeBuildTarget}. Do you want to switch to {SmartBuilderConfig.buildSettings.buildTarget}?", "Yes", "No"
+                   $"Current build target is {EditorUserBuildSettings.activeBuildTarget}. Do you want to switch to {Settings.buildTarget}?", "Yes", "No"
                );
 
                 if (changeBuildTarget)
                 {
-                    EditorUserBuildSettings.SwitchActiveBuildTarget(SmartBuilderConfig.buildSettings.buildTarget);
+                    EditorUserBuildSettings.SwitchActiveBuildTarget(Settings.buildTarget);
 
                 }
                 else
-                    SmartBuilderConfig.buildSettings.buildTarget = EditorUserBuildSettings.activeBuildTarget;
+                    Settings.buildTarget = EditorUserBuildSettings.activeBuildTarget;
                 return false;
             }
 
 
 
-            if (SmartBuilderConfig.buildSettings.buildTarget == BuildTarget.NoTarget)
+            if (Settings.buildTarget == BuildTarget.NoTarget)
             {
                 EditorUtility.DisplayDialog("Smart Builder Error", "Select a Build Target!", "OK");
                 SmartBuilderWindow.Open(1);
                 return false;
             }
 
-            if (SmartBuilderConfig.buildSettings.scenesToBuild.Count == 0)
+            if (Settings.scenesToBuild.Count == 0)
             {
                 EditorUtility.DisplayDialog("Smart Builder Error", "None scenes to build selected!", "OK");
                 SmartBuilderWindow.Open(0);
                 return false;
             }
 
-            string buildPath = SmartBuilderConfig.buildSettings.buildPath;
+            string buildPath = Settings.buildPath;
 
             // resolve o caminho absoluto
             string fullPath = Path.IsPathRooted(buildPath)
@@ -144,7 +145,7 @@ namespace Concept.SmartTools.Editor
                     Debug.LogWarning("[SmartBuilder] Build canceled: no folder selected.");
                     return false;
                 }
-                SmartBuilderConfig.buildSettings.buildPath = newPath;
+                Settings.buildPath = newPath;
             }
 
 
@@ -157,7 +158,7 @@ namespace Concept.SmartTools.Editor
             string newPath = LoadPath();
             if (!string.IsNullOrEmpty(newPath))
             {
-                SmartBuilderConfig.buildSettings.buildPath = newPath;
+                Settings.buildPath = newPath;
             }
         }
 
@@ -191,3 +192,5 @@ namespace Concept.SmartTools.Editor
     }
 }
 #endif
+
+
