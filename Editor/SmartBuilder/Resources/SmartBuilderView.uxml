@@ -1,88 +1,167 @@
-<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" xmlns:quantumEditor="Quantum.Editor" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
-    <Style src="project://database/Packages/com.conceptfactory.smarttools/Editor/SmartBuilder/Resources/SmartBuilderWindowStyles.uss?fileID=7433441132597879392&amp;guid=752d554487b9d79458a2d1c3dbb31d34&amp;type=3#SmartBuilderWindowStyles" />
-    <engine:VisualElement name="ScenesPanel" style="flex-direction: column; justify-content: space-between; flex-grow: 1; display: none;">
-        <engine:Label name="smartBuildLabel" text="SMART BUILDER - Scenes to Publish" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: flex-end; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; height: 36px; padding-top: 4px; padding-right: 8px; padding-bottom: 4px; padding-left: 8px; font-size: 14px;" />
-        <engine:VisualElement class="list" style="display: flex; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 8px; border-left-color: rgba(20, 21, 22, 0.78); border-right-color: rgba(20, 21, 22, 0.78); border-top-color: rgba(20, 21, 22, 0.78); border-bottom-color: rgba(20, 21, 22, 0.78);">
-            <engine:ScrollView name="ScenesScrollView" horizontal-scroller-visibility="Hidden" touch-scroll-type="Elastic" style="flex-grow: 1; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0; background-color: rgb(42, 42, 42);">
-                <engine:VisualElement name="SceneItem" class="scene-toggle" style="flex-grow: 1;">
-                    <Concept.UI.CustomToggle is-label-left="false" checked="false" label="Test Scene" name="CustomToggle" style="flex-direction: row-reverse; align-self: flex-start; align-items: center;" />
-                </engine:VisualElement>
-                <engine:VisualElement name="SceneItem" class="scene-toggle" style="flex-grow: 1;">
-                    <Concept.UI.CustomToggle is-label-left="false" checked="false" label="Test Scene" name="CustomToggle" style="flex-direction: row-reverse; align-self: flex-start; align-items: center;" />
-                </engine:VisualElement>
-                <engine:VisualElement name="SceneItem" class="scene-toggle" style="flex-grow: 1;">
-                    <Concept.UI.CustomToggle is-label-left="false" checked="false" label="Test Scene" name="CustomToggle" style="flex-direction: row-reverse; align-self: flex-start; align-items: center;" />
-                </engine:VisualElement>
-            </engine:ScrollView>
+﻿<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" xmlns:quantumEditor="Quantum.Editor" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.conceptfactory.smarttools/Editor/SmartBuilder/Resources/SmartBuilderWindowStyles.uss?fileID=7433441132597879392&amp;guid=752d554487b9d79458a2d1c3dbb31d34&amp;type=3#SmartBuilderWindowStyles"/>
+    <engine:VisualElement name="HeaderRow" class="smart-build-header">
+        <Concept.UI.TabNavigation tab-buttons="Scenes,Builder,Uploader" name="MainTabNavigation" class="smart-build-header__tabs"/>
+        <engine:VisualElement name="HeaderInfo" class="smart-build-header__info">
+            <engine:Label name="HeaderTitleLabel" text="SMART BUILDER - Scenes to Publish" class="h2 smart-build-header__title"/>
+            <engine:Label name="HeaderVersionLabel" text="" class="version-info-label smart-build-header__version"/>
         </engine:VisualElement>
-        <engine:Button text="Next" name="ButtonNext" class="button" style="align-self: flex-end;" />
     </engine:VisualElement>
-    <engine:VisualElement name="BuilderPanel" style="flex-direction: column; justify-content: space-between; flex-grow: 1; display: flex;">
-        <engine:Label name="smartBuildLabel" text="SMART BUILDER - Build Settings" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: flex-end; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; height: 36px; padding-top: 4px; padding-right: 8px; padding-bottom: 4px; padding-left: 8px; font-size: 14px;" />
-        <engine:VisualElement name="VisualElement" class="list" style="display: flex; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 8px; border-left-color: rgba(20, 21, 22, 0.78); border-right-color: rgba(20, 21, 22, 0.78); border-top-color: rgba(20, 21, 22, 0.78); border-bottom-color: rgba(20, 21, 22, 0.78);">
-            <engine:VisualElement style="flex-grow: 1; color: rgb(255, 255, 255); -unity-text-align: middle-left; padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px; background-color: rgb(42, 42, 42);">
-                <engine:EnumField label="Build Target" type="UnityEditor.BuildTarget, UnityEditor.CoreModule" name="BuildTargetEnum" style="min-width: 50%; margin-bottom: 8px;">
-                    <Bindings>
-                        <engine:DataBinding property="value" data-source-path="m_buildSettings.buildTarget" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
-                    </Bindings>
-                </engine:EnumField>
-                <engine:VisualElement style="flex-direction: row;">
-                    <engine:TextField label="BuildPath" placeholder-text="&lt;Select Folder&gt;" name="BuildPathTextField" style="flex-grow: 1;">
-                        <Bindings>
-                            <engine:DataBinding property="value" data-source-path="m_buildSettings.buildPath" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
-                        </Bindings>
-                    </engine:TextField>
-                    <engine:Button text="Select" name="ButtonSelectPath" class="button" style="position: relative;" />
-                </engine:VisualElement>
-                <engine:VisualElement style="flex-grow: 1; align-self: stretch;" />
-                <Concept.UI.CustomToggle name="AutoUploadToggle" label="Upload after build" value="true" toggle-on-label-click="true" style="align-self: flex-end; flex-direction: row;">
-                    <Bindings>
-                        <engine:DataBinding property="value" data-source-path="m_uploadAfterBuild" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
-                    </Bindings>
-                </Concept.UI.CustomToggle>
+    <engine:VisualElement name="TabContentHost" class="tab-content-host">
+        <engine:VisualElement name="ScenesPanel" class="tab-panel-content" style="flex-direction: column; justify-content: space-between; flex-grow: 1; display: flex;">
+            <engine:VisualElement class="list" style="display: flex; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 8px; border-left-color: rgba(20, 21, 22, 0.78); border-right-color: rgba(20, 21, 22, 0.78); border-top-color: rgba(20, 21, 22, 0.78); border-bottom-color: rgba(20, 21, 22, 0.78);">
+                <engine:ScrollView name="ScenesScrollView" horizontal-scroller-visibility="Hidden" touch-scroll-type="Elastic" style="flex-grow: 1; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0; background-color: rgb(42, 42, 42);">
+                    <engine:VisualElement name="SceneItem" class="scene-toggle" style="flex-grow: 1;">
+                        <Concept.UI.CustomToggle is-label-left="false" checked="false" label="Test Scene" name="CustomToggle" style="flex-direction: row-reverse; align-self: flex-start; align-items: center;"/>
+                    </engine:VisualElement>
+                    <engine:VisualElement name="SceneItem" class="scene-toggle" style="flex-grow: 1;">
+                        <Concept.UI.CustomToggle is-label-left="false" checked="false" label="Test Scene" name="CustomToggle" style="flex-direction: row-reverse; align-self: flex-start; align-items: center;"/>
+                    </engine:VisualElement>
+                    <engine:VisualElement name="SceneItem" class="scene-toggle" style="flex-grow: 1;">
+                        <Concept.UI.CustomToggle is-label-left="false" checked="false" label="Test Scene" name="CustomToggle" style="flex-direction: row-reverse; align-self: flex-start; align-items: center;"/>
+                    </engine:VisualElement>
+                </engine:ScrollView>
+            </engine:VisualElement>
+            <engine:VisualElement style="flex-direction: row; justify-content: space-between; align-items: center;">
+                <engine:Button text="Add Open Scenes" name="ButtonAddOpenScenes" class="button" style="align-self: flex-start;"/>
+                <engine:Button text="Next" name="ButtonNext" class="button" style="align-self: flex-end;"/>
             </engine:VisualElement>
         </engine:VisualElement>
-        <engine:Button text="Build" name="ButtonBuild" class="button" style="align-self: flex-end;" />
-    </engine:VisualElement>
-    <engine:VisualElement name="UploaderPanel" style="flex-direction: column; justify-content: space-between; flex-grow: 1; display: none;">
-        <engine:Label name="smartBuildLabel" text="SMART BUILDER - Upload Settings" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: flex-end; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; height: 36px; padding-top: 4px; padding-right: 8px; padding-bottom: 4px; padding-left: 8px; font-size: 14px;" />
+        <engine:ScrollView name="BuilderPanel" class="tab-panel-scroll" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto" style="display: none;">
+            <engine:VisualElement name="VisualElement" class="list" style="display: flex; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 8px; border-left-color: rgba(20, 21, 22, 0.78); border-right-color: rgba(20, 21, 22, 0.78); border-top-color: rgba(20, 21, 22, 0.78); border-bottom-color: rgba(20, 21, 22, 0.78);">
+                <engine:VisualElement style="flex-grow: 1; color: rgb(255, 255, 255); -unity-text-align: middle-left; padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px; background-color: rgb(42, 42, 42);">
+                    <engine:EnumField label="Build Target" type="UnityEditor.BuildTarget, UnityEditor.CoreModule" name="BuildTargetEnum" style="min-width: 50%; margin-bottom: 8px;"/>
+                    <engine:VisualElement style="flex-direction: row;">
+                        <engine:TextField label="BuildPath" placeholder-text="&lt;Select Folder&gt;" name="BuildPathTextField" style="flex-grow: 1;"/>
+                        <engine:Button text="Select" name="ButtonSelectPath" class="button" style="position: relative;"/>
+                    </engine:VisualElement>
+                    <engine:VisualElement style="flex-grow: 1; align-self: stretch;"/>
+                    <Concept.UI.CustomToggle name="AutoUploadToggle" label="Upload after build" value="true" toggle-on-label-click="true" style="align-self: flex-end; flex-direction: row;">
+                        <Bindings>
+                            <engine:DataBinding property="value" data-source-path="m_uploadAfterBuild" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay"/>
+                        </Bindings>
+                    </Concept.UI.CustomToggle>
+                </engine:VisualElement>
+            </engine:VisualElement>
+            <engine:Button text="Build" name="ButtonBuild" class="button" style="align-self: flex-end;"/>
+        </engine:ScrollView>
+        <engine:ScrollView name="UploaderPanel" class="tab-panel-scroll" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto" style="display: none;">
         <engine:VisualElement class="list" style="display: flex; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 8px; border-left-color: rgba(20, 21, 22, 0.78); border-right-color: rgba(20, 21, 22, 0.78); border-top-color: rgba(20, 21, 22, 0.78); border-bottom-color: rgba(20, 21, 22, 0.78);">
             <engine:VisualElement style="flex-grow: 1; color: rgb(255, 255, 255); -unity-text-align: middle-left; padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px; background-color: rgb(42, 42, 42);">
-                <engine:EnumField label="Ambient Type" type="Concept.SmartTools.BuildType, com.conceptfactory.smarttools" name="AmbientTypeEnum" style="min-width: 50%; margin-bottom: 8px; padding-bottom: 8px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-bottom-color: rgba(20, 21, 22, 0.59);">
+                <engine:VisualElement style="flex-direction: row; align-items: flex-end; margin-bottom: 8px;">
+                    <engine:EnumField label="Build Type" type="Concept.SmartTools.BuildType, com.conceptfactory.smarttools" name="AmbientTypeEnum" style="flex-grow: 1; margin-right: 12px;">
+                        <Bindings>
+                            <engine:DataBinding property="value" data-source-path="m_uploadSettings.buildType" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay"/>
+                        </Bindings>
+                    </engine:EnumField>
+                    <engine:EnumField label="Upload Target" value="SFTP" type="Concept.SmartTools.SmartUploaderSettings+UploadTarget, com.conceptfactory.smarttools.editor" name="UploadTargetEnum" style="flex-grow: 1;">
+                        <Bindings>
+                            <engine:DataBinding property="value" data-source-path="m_uploadSettings.uploadTarget" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay"/>
+                        </Bindings>
+                    </engine:EnumField>
+                </engine:VisualElement>
+                <engine:TextField label="Remote Directory" placeholder-text="&lt;enter remote directory&gt;" name="RemoteDirectoryTextField" style="margin-bottom: 8px;">
                     <Bindings>
-                        <engine:DataBinding property="value" data-source-path="m_uploadSettings.buildType" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
-                    </Bindings>
-                </engine:EnumField>
-                <engine:EnumField label="Upload Target" value="SFTP" type="Concept.SmartTools.SmartUploaderSettings+UploadTarget, com.conceptfactory.smarttools.editor" name="UploadTargetEnum" style="min-width: 50%; margin-bottom: 8px;">
-                    <Bindings>
-                        <engine:DataBinding property="value" data-source-path="m_uploadSettings.uploadTarget" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
-                    </Bindings>
-                </engine:EnumField>
-                <engine:IntegerField label="Remote Port" value="0" name="RemotePortIntegerField">
-                    <Bindings>
-                        <engine:DataBinding property="value" data-source-path="m_uploadSettings.awsRemotePort" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
-                    </Bindings>
-                </engine:IntegerField>
-                <engine:TextField label="Bucket Name" placeholder-text="&lt;enter bucket address&gt;" name="BucketNameTextField" style="margin-bottom: 8px;">
-                    <Bindings>
-                        <engine:DataBinding property="value" data-source-path="m_uploadSettings.awsBucketName" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay" />
+                        <engine:DataBinding property="value" data-source-path="m_uploadSettings.remoteDirectory" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay"/>
                     </Bindings>
                 </engine:TextField>
-                <engine:TextField label="Access Key" placeholder-text="&lt;enter access token key&gt;" name="AccessKeyTextField" password="false" style="margin-bottom: 8px;" />
-                <engine:TextField label="Secret Key" placeholder-text="&lt;enter secret key&gt;" name="SecretKeyTextField" password="true" style="margin-bottom: 8px;" />
+                <engine:VisualElement name="RemoteSubdirectoryRow" style="flex-direction: row; align-items: flex-end; margin-bottom: 8px;">
+                    <engine:TextField label="Remote Subdirectory" placeholder-text="[root] or projetos/nome-do-projeto" name="RemoteSubDirectoryTextField" style="flex-grow: 1; margin-right: 12px;">
+                        <Bindings>
+                            <engine:DataBinding property="value" data-source-path="m_uploadSettings.remoteSubDirectory" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay"/>
+                        </Bindings>
+                    </engine:TextField>
+                    <Concept.UI.CustomToggle name="CleanUpDirectoryToggle" label="Clean Up Directory" value="false" toggle-on-label-click="true" class="clean-up-toggle" style="flex-direction: row; margin-bottom: 1px;">
+                        <Bindings>
+                            <engine:DataBinding property="value" data-source-path="m_uploadSettings.cleanUpDirectory" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay"/>
+                        </Bindings>
+                    </Concept.UI.CustomToggle>
+                </engine:VisualElement>
+                <engine:VisualElement name="RootUploadHint" class="upload-hint-box upload-hint-box--warning" style="display: none;">
+                    <engine:Label name="RootUploadHintLabel" text="[root] will upload the project directly into the remote root directory. Use it with caution." class="upload-hint-label"/>
+                </engine:VisualElement>
+                <engine:VisualElement name="LocalBuildUploadHint" class="upload-hint-box upload-hint-box--error" style="display: none;">
+                    <engine:Label name="LocalBuildUploadHintLabel" text="LOCAL builds cannot be uploaded to a remote host. Change Build Type to DEVELOPMENT, TEST, PREVIEW or RELEASE." class="upload-hint-label"/>
+                </engine:VisualElement>
+                <engine:VisualElement name="NonReleaseUploadHint" class="upload-hint-box" style="display: none;">
+                    <engine:Label name="NonReleaseUploadHintLabel" text="Non-release builds are uploaded with an automatic prefix in the remote subdirectory." class="upload-hint-label"/>
+                </engine:VisualElement>
+                <engine:VisualElement name="SftpFieldsGroup">
+                    <engine:VisualElement style="flex-direction: row; align-items: flex-end; margin-bottom: 8px; min-width: 0;">
+                        <engine:TextField label="Host" placeholder-text="&lt;enter sftp host&gt;" name="SftpHostTextField" style="flex-grow: 1; flex-shrink: 1; flex-basis: 0; min-width: 0; margin-right: 8px;">
+                            <Bindings>
+                                <engine:DataBinding property="value" data-source-path="m_uploadSettings.sftpHost" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay"/>
+                            </Bindings>
+                        </engine:TextField>
+                        <engine:IntegerField label="Port" value="22" name="SftpPortIntegerField" class="port-field" style="width: 116px; min-width: 116px; max-width: 116px; flex-shrink: 0;">
+                            <Bindings>
+                                <engine:DataBinding property="value" data-source-path="m_uploadSettings.sftpPort" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay"/>
+                            </Bindings>
+                        </engine:IntegerField>
+                    </engine:VisualElement>
+                    <engine:VisualElement style="flex-direction: row; justify-content: flex-end; margin-bottom: 8px; min-width: 0;">
+                        <engine:EnumField label="Auth Mode" value="Password" type="Concept.SmartTools.SmartUploaderSettings+SftpAuthMode, com.conceptfactory.smarttools.editor" name="SftpAuthModeEnum" style="width: 240px; min-width: 220px; max-width: 240px; flex-shrink: 0;">
+                            <Bindings>
+                                <engine:DataBinding property="value" data-source-path="m_uploadSettings.sftpAuthMode" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay"/>
+                            </Bindings>
+                        </engine:EnumField>
+                    </engine:VisualElement>
+                    <engine:TextField label="User" placeholder-text="&lt;enter sftp user&gt;" name="SftpUserTextField" style="margin-bottom: 8px;">
+                        <Bindings>
+                            <engine:DataBinding property="value" data-source-path="m_uploadSettings.sftpUser" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay"/>
+                        </Bindings>
+                    </engine:TextField>
+                    <engine:VisualElement name="SftpPasswordFieldsGroup">
+                        <engine:VisualElement class="password-field-row" style="margin-bottom: 8px;">
+                            <engine:TextField label="Password" placeholder-text="&lt;enter sftp password&gt;" name="SftpPasswordTextField" password="true" class="password-field-row__field"/>
+                            <engine:TextField label="Password" placeholder-text="&lt;enter sftp password&gt;" name="SftpPasswordRevealTextField" password="false" class="password-field-row__field" style="display: none;"/>
+                            <engine:Button name="SftpPasswordRevealButton" class="password-reveal-button"/>
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                    <engine:VisualElement name="SftpKeyFieldsGroup">
+                        <engine:DropdownField label="Private Key" name="SftpPrivateKeyDropdown" style="margin-bottom: 8px;"/>
+                        <engine:VisualElement class="password-field-row" style="margin-bottom: 8px;">
+                            <engine:TextField label="Key Passphrase" placeholder-text="&lt;optional passphrase&gt;" name="SftpPrivateKeyPassphraseTextField" password="true" class="password-field-row__field"/>
+                            <engine:TextField label="Key Passphrase" placeholder-text="&lt;optional passphrase&gt;" name="SftpPrivateKeyPassphraseRevealTextField" password="false" class="password-field-row__field" style="display: none;"/>
+                            <engine:Button name="SftpPrivateKeyPassphraseRevealButton" class="password-reveal-button"/>
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+                <engine:VisualElement name="AwsFieldsGroup">
+                    <engine:TextField label="Bucket Name" placeholder-text="&lt;enter bucket address&gt;" name="BucketNameTextField" style="margin-bottom: 8px;">
+                        <Bindings>
+                            <engine:DataBinding property="value" data-source-path="m_uploadSettings.awsBucketName" data-source-type="Concept.SmartTools.SmartBuilderConfig, com.conceptfactory.smarttools.editor" binding-mode="TwoWay"/>
+                        </Bindings>
+                    </engine:TextField>
+                    <engine:TextField label="Access Key" placeholder-text="&lt;enter access token key&gt;" name="AccessKeyTextField" password="false" style="margin-bottom: 8px;"/>
+                    <engine:TextField label="Secret Key" placeholder-text="&lt;enter secret key&gt;" name="SecretKeyTextField" password="true" style="margin-bottom: 8px;"/>
+                </engine:VisualElement>
             </engine:VisualElement>
         </engine:VisualElement>
-        <engine:Button text="Upload" name="ButtonUpload" class="button" style="align-self: flex-end;" />
+            <engine:Button text="Upload" name="ButtonUpload" class="button" style="align-self: flex-end;"/>
+        </engine:ScrollView>
     </engine:VisualElement>
-    <Concept.UI.TabNavigation tab-buttons="Scenes,Builder,Uploader" style="align-self: flex-start; position: absolute;" />
-    <engine:VisualElement name="ProgressOverlay" class="overlay" style="display: none; background-color: rgba(20, 21, 22, 0.78);">
-        <engine:Label name="ProgressStatusLabel" text="BUILDING PROJECT" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 2px; padding-left: 0; font-size: 14px;" />
+    <engine:VisualElement name="ProgressOverlay" class="smart-builder-overlay is-hidden" style="background-color: rgba(20, 21, 22, 0.78);">
+        <engine:Label name="ProgressStatusLabel" text="BUILDING PROJECT" class="h2" style="color: rgb(255, 255, 255); -unity-text-align: lower-right; align-self: center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 2px; padding-left: 0; font-size: 14px;"/>
         <engine:VisualElement name="ProgressPanel" style="align-self: center; min-width: 360px; min-height: 24px; padding-top: 4px; padding-right: 4px; padding-bottom: 4px; padding-left: 4px; border-left-color: rgba(255, 255, 255, 0.39); border-right-color: rgba(255, 255, 255, 0.39); border-top-color: rgba(255, 255, 255, 0.39); border-bottom-color: rgba(255, 255, 255, 0.39); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 6px; border-top-right-radius: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; overflow: hidden;">
             <engine:VisualElement style="flex-grow: 1; border-left-color: rgba(49, 117, 0, 0.78); border-right-color: rgba(49, 117, 0, 0.78); border-top-color: rgba(49, 117, 0, 0.78); border-bottom-color: rgba(49, 117, 0, 0.78); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; overflow: hidden;">
-                <engine:VisualElement name="ProgressBar" style="flex-grow: 1; transform-origin: left; background-color: rgba(147, 255, 0, 0.59); scale: 0.1 1;" />
+                <engine:VisualElement name="ProgressBar" style="flex-grow: 1; transform-origin: left; background-color: rgba(147, 255, 0, 0.59); scale: 0.1 1;"/>
             </engine:VisualElement>
         </engine:VisualElement>
-        <engine:Label name="ProgressLabel" text="Compiling script modules..." class="h2" style="color: rgb(255, 255, 255); -unity-text-align: upper-right; align-self: center; margin-top: 2px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 12px; -unity-font-style: normal;" />
-        <engine:Button text="Cancel Operation" name="ButtonCancel" class="button" style="margin-top: 12px; display: none;" />
+        <engine:Label name="ProgressLabel" text="Compiling script modules..." class="h2" style="color: rgb(255, 255, 255); -unity-text-align: upper-right; align-self: center; margin-top: 2px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 12px; -unity-font-style: normal;"/>
+        <engine:VisualElement name="OverallProgressPanel" style="align-self: center; min-width: 360px; min-height: 24px; margin-top: 10px; padding-top: 4px; padding-right: 4px; padding-bottom: 4px; padding-left: 4px; border-left-color: rgba(255, 255, 255, 0.39); border-right-color: rgba(255, 255, 255, 0.39); border-top-color: rgba(255, 255, 255, 0.39); border-bottom-color: rgba(255, 255, 255, 0.39); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 6px; border-top-right-radius: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; overflow: hidden;">
+            <engine:VisualElement style="flex-grow: 1; border-left-color: rgba(49, 117, 0, 0.78); border-right-color: rgba(49, 117, 0, 0.78); border-top-color: rgba(49, 117, 0, 0.78); border-bottom-color: rgba(49, 117, 0, 0.78); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; overflow: hidden;">
+                <engine:VisualElement name="OverallProgressBar" style="flex-grow: 1; transform-origin: left; background-color: rgba(147, 255, 0, 0.59); scale: 0.1 1;"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:Label name="ProgressOverallLabel" text="0%" class="h2" style="color: rgba(255, 255, 255, 0.72); -unity-text-align: upper-right; align-self: center; margin-top: 2px; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; font-size: 11px; -unity-font-style: normal;"/>
+        <engine:Button text="Cancel Operation" name="ButtonCancel" class="button is-hidden" style="margin-top: 12px;"/>
+    </engine:VisualElement>
+    <engine:VisualElement name="MessageOverlay" class="smart-builder-overlay is-hidden" style="background-color: rgba(0, 0, 0, 0.68);">
+        <engine:VisualElement name="MessagePanel" class="message-panel">
+            <engine:Label name="MessageTitleLabel" text="Upload Error" class="h2 message-title"/>
+            <engine:Label name="MessageBodyLabel" text="The upload failed." class="message-body"/>
+            <engine:Button text="Close" name="MessageCloseButton" class="button" style="margin-top: 14px; align-self: center;"/>
+        </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

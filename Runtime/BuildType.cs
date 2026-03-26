@@ -1,4 +1,4 @@
 namespace Concept.SmartTools
 {
-    public enum BuildType { RELEASE, DEVELOPMENT, LOCAL };
+    public enum BuildType { RELEASE, DEVELOPMENT, LOCAL, TEST, PREVIEW };
 }

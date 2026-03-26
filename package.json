@@ -1,7 +1,7 @@
 {
   "name": "com.conceptfactory.smarttools",
   "displayName": "Concept Factory - Smart Tools",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "tool",
   "unity": "6000.0",
   "unityRelease": "43f1",
